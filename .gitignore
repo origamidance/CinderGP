@@ -29,9 +29,13 @@
 *.app
 
 # Build directory
-build/
+build//
 build/*
 
 # Bin directory
-bin/
+bin//
 bin/*
+
+# Generated py files
+__*
+.ycm*

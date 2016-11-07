@@ -59,9 +59,9 @@ private:
 
 	bool				mShowColors;
 	bool				mShowNormals, mShowTangents;
-	bool				mShowGrid;
-	bool				mShowSolidPrimitive;/**< Identifier of solid primitive*/
-	bool				mShowWirePrimitive;
+	bool				mShowGrid;        /**< Identifier of enabling showing grid*/
+	bool				mShowSolidPrimitive;
+	bool				mShowWirePrimitive;/**< Flag m Show Wire Primitive  */
 	bool				mEnableFaceFulling;
 
 	CameraPersp			mCamera;
@@ -287,7 +287,9 @@ void GeometryApp::draw()
   // Draw fps
   ui::Text("fps = %f",ci::app::AppBase::getAverageFps());
   ui::ShowTestWindow();
-
+  ui::Text("lalala");
+  float test[4];
+  ui::ColorPicker4("haha",test);
 }
 
 void GeometryApp::mouseDown( MouseEvent event )

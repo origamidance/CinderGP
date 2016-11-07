@@ -1,0 +1,3 @@
+[submodule "Cinder-ImGui"]
+	path = Cinder-ImGui
+	url = https://github.com/origamidance/Cinder-ImGui.git
