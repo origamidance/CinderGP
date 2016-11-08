@@ -40,6 +40,9 @@ public:
 
 	void fileDrop( FileDropEvent event ) override;
 
+  void initUI();
+  void updateUI();
+
 private:
 	void createGrid();
 	void createPhongShader();
@@ -47,8 +50,8 @@ private:
 	void createWireframeShader();
 	void createGeometry();
 	void loadGeomSource( const geom::Source &source, const geom::Source &sourceWire );
-	void createParams();
-	void updateParams();
+	// void createParams();
+	// void updateParams();
 
 	Primitive			mPrimitiveSelected;
 	Primitive			mPrimitiveCurrent;
@@ -106,12 +109,12 @@ private:
 	float				mTorusKnotRadius;
 	vec3				mTorusKnotScale;
 
-#if ! defined( CINDER_GL_ES )
-	params::InterfaceGlRef	mParams;
+// #if ! defined( CINDER_GL_ES )
+// 	params::InterfaceGlRef	mParams;
 
-	typedef std::vector<params::InterfaceGl::OptionsBase> ParamGroup;
-	std::vector<ParamGroup>	mPrimitiveParams;
-#endif
+// 	typedef std::vector<params::InterfaceGl::OptionsBase> ParamGroup;
+// 	std::vector<ParamGroup>	mPrimitiveParams;
+// #endif
 };
 
 void prepareSettings( App::Settings* settings )
@@ -173,9 +176,9 @@ void GeometryApp::setup()
 	createGeometry();
 
 	// Create a parameter window, so we can toggle stuff.
-	createParams();
+	// createParams();
 
-  ui::initialize();
+  initUI();
 }
 
 void GeometryApp::update()
@@ -194,6 +197,7 @@ void GeometryApp::update()
 		mCameraTarget = lerp( mCameraTarget, mCameraLerpTarget, 0.25f );
 		mCamera.lookAt( eye, mCameraTarget );
 	}
+  updateUI();
 }
 
 void GeometryApp::draw()
@@ -277,19 +281,19 @@ void GeometryApp::draw()
 	// Disable the depth buffer.
 	gl::disableDepthRead();
 
-	// Render the parameter windows.
-#if ! defined( CINDER_GL_ES )
-	if( mParams ) {
-		mParams->draw();
-	}
-#endif
+// 	// Render the parameter windows.
+// #if ! defined( CINDER_GL_ES )
+// 	if( mParams ) {
+// 		mParams->draw();
+// 	}
+// #endif
 
-  // Draw fps
-  ui::Text("fps = %f",ci::app::AppBase::getAverageFps());
-  ui::ShowTestWindow();
-  ui::Text("lalala");
-  float test[4];
-  ui::ColorPicker4("haha",test);
+  // // Draw fps
+  // ui::Text("fps = %f",ci::app::AppBase::getAverageFps());
+  // ui::ShowTestWindow();
+  // ui::Text("lalala");
+  // float test[4];
+  // ui::ColorPicker4("haha",test);
 }
 
 void GeometryApp::mouseDown( MouseEvent event )
@@ -325,7 +329,7 @@ void GeometryApp::keyDown( KeyEvent event )
 		case KeyEvent::KEY_SPACE:
 			mPrimitiveSelected = static_cast<Primitive>( ( static_cast<int>( mPrimitiveSelected ) + 1 ) % PRIMITIVE_COUNT );
 			createGeometry();
-			updateParams();
+			// updateParams();
 			break;
 		case KeyEvent::KEY_c:
 			mShowColors = !mShowColors;
@@ -372,86 +376,86 @@ void GeometryApp::fileDrop( FileDropEvent event )
 	}
 }
 
-void GeometryApp::createParams()
-{
-#if ! defined( CINDER_GL_ES )
-	vector<string> primitives = { "Capsule", "Cone", "Cube", "Cylinder", "Helix", "Icosahedron", "Icosphere", "Sphere", "Teapot", "Torus", "Torus Knot", "Plane", "Rectangle", "Rounded Rectangle", "Circle", "Ring" };
-	vector<string> qualities = { "Low", "Default", "High" };
-	vector<string> viewModes = { "Shaded", "Wireframe" };
-	vector<string> texturingModes = { "None", "Procedural", "Sampler" };
+// void GeometryApp::createParams()
+// {
+// #if ! defined( CINDER_GL_ES )
+// 	vector<string> primitives = { "Capsule", "Cone", "Cube", "Cylinder", "Helix", "Icosahedron", "Icosphere", "Sphere", "Teapot", "Torus", "Torus Knot", "Plane", "Rectangle", "Rounded Rectangle", "Circle", "Ring" };
+// 	vector<string> qualities = { "Low", "Default", "High" };
+// 	vector<string> viewModes = { "Shaded", "Wireframe" };
+// 	vector<string> texturingModes = { "None", "Procedural", "Sampler" };
 
-	mParams = params::InterfaceGl::create( getWindow(), "Geometry Demo", toPixels( ivec2( 300, 400 ) ) );
-	mParams->setOptions( "", "valueswidth=100 refresh=0.1" );
+// 	mParams = params::InterfaceGl::create( getWindow(), "Geometry Demo", toPixels( ivec2( 300, 400 ) ) );
+// 	mParams->setOptions( "", "valueswidth=100 refresh=0.1" );
 
-	mParams->addParam( "Primitive", primitives, (int*)&mPrimitiveSelected ).updateFn( std::bind( &GeometryApp::updateParams, this ) );
-	mParams->addParam( "Quality", qualities, (int*)&mQualitySelected );
-	mParams->addParam( "Viewing Mode", viewModes, (int*)&mViewMode );
-	mParams->addParam( "Texturing Mode", texturingModes, (int*)&mTexturingMode );
+// 	mParams->addParam( "Primitive", primitives, (int*)&mPrimitiveSelected ).updateFn( std::bind( &GeometryApp::updateParams, this ) );
+// 	mParams->addParam( "Quality", qualities, (int*)&mQualitySelected );
+// 	mParams->addParam( "Viewing Mode", viewModes, (int*)&mViewMode );
+// 	mParams->addParam( "Texturing Mode", texturingModes, (int*)&mTexturingMode );
 
-	mParams->addSeparator();
+// 	mParams->addSeparator();
 
-	mParams->addParam( "Show Grid", &mShowGrid );
-	mParams->addParam( "Show Normals", &mShowNormals );
-	mParams->addParam( "Show Tangents", &mShowTangents );
-	mParams->addParam( "Show Colors", &mShowColors ).updateFn( [this] { createGeometry(); } );
-	mParams->addParam( "Face Culling", &mEnableFaceFulling ).updateFn( [this] { gl::enableFaceCulling( mEnableFaceFulling ); } );
+// 	mParams->addParam( "Show Grid", &mShowGrid );
+// 	mParams->addParam( "Show Normals", &mShowNormals );
+// 	mParams->addParam( "Show Tangents", &mShowTangents );
+// 	mParams->addParam( "Show Colors", &mShowColors ).updateFn( [this] { createGeometry(); } );
+// 	mParams->addParam( "Face Culling", &mEnableFaceFulling ).updateFn( [this] { gl::enableFaceCulling( mEnableFaceFulling ); } );
 
-	mParams->addSeparator();
+// 	mParams->addSeparator();
 
-	mParams->addParam( "Show Wire Primitive", &mShowWirePrimitive );
-	mParams->addParam( "Show Solid Primitive", &mShowSolidPrimitive );
+// 	mParams->addParam( "Show Wire Primitive", &mShowWirePrimitive );
+// 	mParams->addParam( "Show Solid Primitive", &mShowSolidPrimitive );
 
-	mParams->addSeparator();
+// 	mParams->addSeparator();
 
-	//
-	mPrimitiveParams.resize( PRIMITIVE_COUNT );
+// 	//
+// 	mPrimitiveParams.resize( PRIMITIVE_COUNT );
 
-	// Capsule
-	mPrimitiveParams[CAPSULE].push_back( mParams->addParam( "Capsule: Radius", &mCapsuleRadius ).step( 0.01f ).updateFn( [this] { createGeometry(); } ) );
-	mPrimitiveParams[CAPSULE].push_back( mParams->addParam( "Capsule: Length", &mCapsuleLength ).step( 0.05f ).updateFn( [this] { createGeometry(); } ) );
+// 	// Capsule
+// 	mPrimitiveParams[CAPSULE].push_back( mParams->addParam( "Capsule: Radius", &mCapsuleRadius ).step( 0.01f ).updateFn( [this] { createGeometry(); } ) );
+// 	mPrimitiveParams[CAPSULE].push_back( mParams->addParam( "Capsule: Length", &mCapsuleLength ).step( 0.05f ).updateFn( [this] { createGeometry(); } ) );
 
-	// Cone
-	mPrimitiveParams[CONE].push_back( mParams->addParam( "Cone: Ratio", &mConeRatio ).step( 0.01f ).updateFn( [this] { createGeometry(); } ) );
+// 	// Cone
+// 	mPrimitiveParams[CONE].push_back( mParams->addParam( "Cone: Ratio", &mConeRatio ).step( 0.01f ).updateFn( [this] { createGeometry(); } ) );
 
-	// Helix
-	mPrimitiveParams[HELIX].push_back( mParams->addParam( "Helix: Ratio", &mHelixRatio ).step( 0.01f ).updateFn( [this] { createGeometry(); } ) );
-	mPrimitiveParams[HELIX].push_back( mParams->addParam( "Helix: Coils", &mHelixCoils ).step( 0.1f ).updateFn( [this] { createGeometry(); } ) );
-	mPrimitiveParams[HELIX].push_back( mParams->addParam( "Helix: Twist", &mHelixTwist ).updateFn( [this] { createGeometry(); } ) );
-	mPrimitiveParams[HELIX].push_back( mParams->addParam( "Helix: Twist Offset", &mHelixOffset ).step( 0.05f ).updateFn( [this] { createGeometry(); } ) );
+// 	// Helix
+// 	mPrimitiveParams[HELIX].push_back( mParams->addParam( "Helix: Ratio", &mHelixRatio ).step( 0.01f ).updateFn( [this] { createGeometry(); } ) );
+// 	mPrimitiveParams[HELIX].push_back( mParams->addParam( "Helix: Coils", &mHelixCoils ).step( 0.1f ).updateFn( [this] { createGeometry(); } ) );
+// 	mPrimitiveParams[HELIX].push_back( mParams->addParam( "Helix: Twist", &mHelixTwist ).updateFn( [this] { createGeometry(); } ) );
+// 	mPrimitiveParams[HELIX].push_back( mParams->addParam( "Helix: Twist Offset", &mHelixOffset ).step( 0.05f ).updateFn( [this] { createGeometry(); } ) );
 
-	// Ring
-	mPrimitiveParams[RING].push_back( mParams->addParam( "Ring: Width", &mRingWidth ).step( 0.01f ).updateFn( [this] { createGeometry(); } ) );
+// 	// Ring
+// 	mPrimitiveParams[RING].push_back( mParams->addParam( "Ring: Width", &mRingWidth ).step( 0.01f ).updateFn( [this] { createGeometry(); } ) );
 
-	// Rounded Rect
-	mPrimitiveParams[ROUNDEDRECT].push_back( mParams->addParam( "Corner Radius", &mRoundedRectRadius ).step( 0.01f ).updateFn( [this] { createGeometry(); } ) );
+// 	// Rounded Rect
+// 	mPrimitiveParams[ROUNDEDRECT].push_back( mParams->addParam( "Corner Radius", &mRoundedRectRadius ).step( 0.01f ).updateFn( [this] { createGeometry(); } ) );
 
-	// Torus
-	mPrimitiveParams[TORUS].push_back( mParams->addParam( "Torus: Ratio", &mTorusRatio ).step( 0.01f ).updateFn( [this] { createGeometry(); } ) );
-	mPrimitiveParams[TORUS].push_back( mParams->addParam( "Torus: Twist", &mTorusTwist ).updateFn( [this] { createGeometry(); } ) );
-	mPrimitiveParams[TORUS].push_back( mParams->addParam( "Torus: Twist Offset", &mTorusOffset ).step( 0.05f ).updateFn( [this] { createGeometry(); } ) );
+// 	// Torus
+// 	mPrimitiveParams[TORUS].push_back( mParams->addParam( "Torus: Ratio", &mTorusRatio ).step( 0.01f ).updateFn( [this] { createGeometry(); } ) );
+// 	mPrimitiveParams[TORUS].push_back( mParams->addParam( "Torus: Twist", &mTorusTwist ).updateFn( [this] { createGeometry(); } ) );
+// 	mPrimitiveParams[TORUS].push_back( mParams->addParam( "Torus: Twist Offset", &mTorusOffset ).step( 0.05f ).updateFn( [this] { createGeometry(); } ) );
 
-	// Torus Knot
-	mPrimitiveParams[TORUSKNOT].push_back( mParams->addParam( "Torus Knot: Parameter P", &mTorusKnotP ).updateFn( [this] { createGeometry(); } ) );
-	mPrimitiveParams[TORUSKNOT].push_back( mParams->addParam( "Torus Knot: Parameter Q", &mTorusKnotQ ).updateFn( [this] { createGeometry(); } ) );
-	mPrimitiveParams[TORUSKNOT].push_back( mParams->addParam( "Torus Knot: Scale X", &mTorusKnotScale.x ).step( 0.1f ).updateFn( [this] { createGeometry(); } ) );
-	mPrimitiveParams[TORUSKNOT].push_back( mParams->addParam( "Torus Knot: Scale Y", &mTorusKnotScale.y ).step( 0.1f ).updateFn( [this] { createGeometry(); } ) );
-	mPrimitiveParams[TORUSKNOT].push_back( mParams->addParam( "Torus Knot: Scale Z", &mTorusKnotScale.z ).step( 0.1f ).updateFn( [this] { createGeometry(); } ) );
-	mPrimitiveParams[TORUSKNOT].push_back( mParams->addParam( "Torus Knot: Radius", &mTorusKnotRadius ).step( 0.05f ).updateFn( [this] { createGeometry(); } ) );
+// 	// Torus Knot
+// 	mPrimitiveParams[TORUSKNOT].push_back( mParams->addParam( "Torus Knot: Parameter P", &mTorusKnotP ).updateFn( [this] { createGeometry(); } ) );
+// 	mPrimitiveParams[TORUSKNOT].push_back( mParams->addParam( "Torus Knot: Parameter Q", &mTorusKnotQ ).updateFn( [this] { createGeometry(); } ) );
+// 	mPrimitiveParams[TORUSKNOT].push_back( mParams->addParam( "Torus Knot: Scale X", &mTorusKnotScale.x ).step( 0.1f ).updateFn( [this] { createGeometry(); } ) );
+// 	mPrimitiveParams[TORUSKNOT].push_back( mParams->addParam( "Torus Knot: Scale Y", &mTorusKnotScale.y ).step( 0.1f ).updateFn( [this] { createGeometry(); } ) );
+// 	mPrimitiveParams[TORUSKNOT].push_back( mParams->addParam( "Torus Knot: Scale Z", &mTorusKnotScale.z ).step( 0.1f ).updateFn( [this] { createGeometry(); } ) );
+// 	mPrimitiveParams[TORUSKNOT].push_back( mParams->addParam( "Torus Knot: Radius", &mTorusKnotRadius ).step( 0.05f ).updateFn( [this] { createGeometry(); } ) );
 
-	updateParams();
-#endif
-}
+// 	updateParams();
+// #endif
+// }
 
-void GeometryApp::updateParams()
-{
-#if ! defined( CINDER_GL_ES )
-	for( int i = 0; i < mPrimitiveParams.size(); ++i ) {
-		for( auto &param : mPrimitiveParams[i] ) {
-			param.setVisible( i == mPrimitiveSelected );
-		}
-	}
-#endif
-}
+// void GeometryApp::updateParams()
+// {
+// #if ! defined( CINDER_GL_ES )
+// 	for( int i = 0; i < mPrimitiveParams.size(); ++i ) {
+// 		for( auto &param : mPrimitiveParams[i] ) {
+// 			param.setVisible( i == mPrimitiveSelected );
+// 		}
+// 	}
+// #endif
+// }
 
 void GeometryApp::createGrid()
 {
@@ -661,3 +665,82 @@ void GeometryApp::createWireframeShader()
 }
 
 CINDER_APP( GeometryApp, RendererGl( RendererGl::Options().msaa( 16 ) ), prepareSettings )
+/**
+ * @name initUI - Initializes the Imgui
+ * @return void
+ */
+void GeometryApp::initUI()
+{
+  ui::initialize();
+}
+/**
+ * @name updateUI - Updates the Imgui
+ * @return void
+ */
+void GeometryApp::updateUI()
+{
+// The view options
+  ui::ShowTestWindow();
+  {
+    vector<string> primitives = { "Capsule", "Cone", "Cube", "Cylinder", "Helix", "Icosahedron", "Icosphere", "Sphere", "Teapot", "Torus", "Torus Knot", "Plane", "Rectangle", "Rounded Rectangle", "Circle", "Ring" };
+    vector<string> qualities = { "Low", "Default", "High" };
+    vector<string> viewModes = { "Shaded", "Wireframe" };
+    vector<string> texturingModes = { "None", "Procedural", "Sampler" };
+
+    ui::ScopedWindow viewOptions("View options",ImGuiWindowFlags_AlwaysAutoResize);
+    static int nPrimitiveSelected=mPrimitiveSelected;
+    ui::Combo("Primitive", (int*)&mPrimitiveSelected, primitives);
+    switch ((int)mPrimitiveSelected){
+      // Capsule
+    case CAPSULE:
+      if(ui::DragFloat("Capsule: Radius", &mCapsuleRadius, 0.01f)){createGeometry();};
+      if(ui::DragFloat("Capsule: Length", &mCapsuleLength, 0.01f)){createGeometry();};
+      break;
+      // Cone
+    case CONE:
+      if(ui::DragFloat("CONE: Ratio", &mConeRatio, 0.01f)){createGeometry();};
+      break;
+      // Helix
+    case HELIX:
+      if(ui::DragFloat("Helix: Ratio", &mHelixRatio, 0.01f)){createGeometry();};
+      if(ui::DragFloat("Helix: Coils", &mHelixCoils, 0.01f)){createGeometry();};
+      if(ui::DragInt("Helix: Twist", (int*)&mHelixTwist, 0.01f)){createGeometry();};
+      if(ui::DragFloat("Helix: Twist Offset", &mHelixOffset, 0.01f)){createGeometry();};
+      break;
+      // Ring
+    case RING:
+      if(ui::DragFloat("Ring: Width", &mRingWidth, 0.01f)){createGeometry();};
+      break;
+      // Rounded Rect
+    case ROUNDEDRECT:
+      if(ui::DragFloat("Corner Radius", &mRoundedRectRadius, 0.01f)){createGeometry();};
+      break;
+      // Torus
+    case TORUS:
+      if(ui::DragFloat("Torus: Ratio", &mTorusRatio, 0.01f)){createGeometry();};
+      if(ui::DragInt("Torus: Twist", (int*)&mTorusTwist, 0.01f)){createGeometry();};
+      if(ui::DragFloat("Torus: Twist Offset", &mTorusOffset, 0.01f)){createGeometry();};
+      break;
+      // Torus Knot
+    case TORUSKNOT:
+      if(ui::DragInt("Torus Knot: Parameter P", &mTorusKnotP, 0.01f)){createGeometry();};
+      if(ui::DragInt("Torus Knot: Parameter Q", &mTorusKnotQ, 0.01f)){createGeometry();};
+      if(ui::DragFloat("Torus Knot: Scale X", &mTorusKnotScale.x, 0.1f)){createGeometry();};
+      if(ui::DragFloat("Torus Knot: Scale Y", &mTorusKnotScale.y, 0.1f)){createGeometry();};
+      if(ui::DragFloat("Torus Knot: Scale Z", &mTorusKnotScale.z, 0.1f)){createGeometry();};
+      if(ui::DragFloat("Torus Knot: Radius", &mTorusKnotRadius, 0.1f)){createGeometry();};
+      break;
+    }
+    ui::Combo("Quality",(int*)&mQualitySelected,qualities);
+    ui::Combo("Viewing Mode",(int*)&mViewMode,viewModes);
+    ui::Combo("Texturing Mode",(int*)&mTexturingMode,texturingModes);
+    ui::Checkbox("Show Grid", &mShowGrid );
+    ui::Checkbox("Show Normals", &mShowNormals);
+    ui::Checkbox("Show Tangents", &mShowTangents);
+    if (ui::Checkbox("Show Colors", &mShowColors)) {createGeometry();};
+    if (ui::Checkbox( "Face Culling", &mEnableFaceFulling)) { gl::enableFaceCulling(mEnableFaceFulling);};
+    ui::Checkbox("Show Wire Primitive", &mShowWirePrimitive);
+    ui::Checkbox("Show Solid Primitive", &mShowSolidPrimitive);
+
+  }
+}

@@ -14,3 +14,11 @@ ci_make_app(
 	CINDER_PATH ${CINDER_PATH}
 	BLOCKS      Cinder-ImGui
 )
+
+project( BasicApp )
+
+ci_make_app(
+	SOURCES     ${CMAKE_CURRENT_LIST_DIR}/src/BasicApp.cpp
+	CINDER_PATH ${CINDER_PATH}
+	BLOCKS      Cinder-ImGui
+)
