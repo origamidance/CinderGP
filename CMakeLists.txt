@@ -9,6 +9,10 @@ include( "${CINDER_PATH}/proj/cmake/modules/cinderMakeApp.cmake" )
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/bin)
 
+include_directories("/home/origamidance/dependencies/libigl/include")
+include_directories("/usr/include/eigen3")
+include_directories("/usr/include/eigen3/unsupported")
+
 ci_make_app(
 	SOURCES     ${CMAKE_CURRENT_LIST_DIR}/src/CinderGP.cpp
 	CINDER_PATH ${CINDER_PATH}
