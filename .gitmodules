@@ -1,3 +1,9 @@
 [submodule "Cinder-ImGui"]
 	path = Cinder-ImGui
 	url = https://github.com/origamidance/Cinder-ImGui.git
+[submodule "Cinder-libigl"]
+	path = Cinder-libigl
+	url = https://github.com/origamidance/Cinder-libigl.git
+[submodule "Cinder-LibIgl"]
+	path = Cinder-LibIgl
+	url = https://github.com/origamidance/Cinder-LibIgl.git
