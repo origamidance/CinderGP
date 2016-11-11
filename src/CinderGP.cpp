@@ -15,6 +15,7 @@
 #include "cinder/params/Params.h"
 #include "cinder/ObjLoader.h"
 #include <igl/read_triangle_mesh.h>
+#include "CinderLibIgl.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -816,15 +817,16 @@ void GeometryApp::createGeometry() {
     }
     break;
   case VBOMESH:
-    // Eigen::MatrixXd V;
-    // Eigen::MatrixXi F;
-    // cout << "asset path="<<getAssetPath("arm.obj").c_str() << "\n";
-    // igl::read_triangle_mesh(getAssetPath("arm.obj").c_str(),V,F );
-    // cout << "size of V="<<V.rows() << "\n";
+    Eigen::MatrixXd V;
+    Eigen::MatrixXi F;
+    cout << "asset path="<<getAssetPath("arm.obj").c_str() << "\n";
+    igl::read_triangle_mesh(getAssetPath("arm.obj").c_str(),V,F );
+    cout << "size of V="<<V.rows() << "\n";
+    gl::testgl();
     // auto plane = geom::Plane().size( vec2( 20, 20 ) ).subdivisions( ivec2( 200, 50 ) );
     // auto mVboMesh =gl::VboMesh::create(plane);
     // if (mPhongShader)
-    //   mPrimitive = gl::Batch::create(mVboMesh, mPhongShader);
+      // mPrimitive = gl::Batch::create(V, F, mPhongShader);
     // cout << "VBOMesh" << "\n"; 
     ObjLoader loader(loadFile(getAssetPath("arm.obj").c_str()));
     break;

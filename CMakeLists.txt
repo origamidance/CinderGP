@@ -13,8 +13,13 @@ include_directories("/home/origamidance/dependencies/libigl/include")
 include_directories("/usr/include/eigen3")
 include_directories("/usr/include/eigen3/unsupported")
 
+set(CI_APP_SOURCES ${CMAKE_CURRENT_LIST_DIR}/src/CinderGP.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/src/CinderLibIgl.h
+  ${CMAKE_CURRENT_LIST_DIR}/src/CinderLibIgl.cpp
+)
+
 ci_make_app(
-	SOURCES     ${CMAKE_CURRENT_LIST_DIR}/src/CinderGP.cpp
+	SOURCES     ${CI_APP_SOURCES}
 	CINDER_PATH ${CINDER_PATH}
 	BLOCKS      Cinder-ImGui
 )
