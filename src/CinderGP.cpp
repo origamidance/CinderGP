@@ -15,6 +15,8 @@
 #include "cinder/params/Params.h"
 #include "cinder/ObjLoader.h"
 #include <igl/read_triangle_mesh.h>
+#include <igl/opengl/create_mesh_vbo.h>
+#include <igl/viewer/ViewerData.h>
 #include "CinderLibIgl.h"
 
 using namespace ci;
@@ -822,13 +824,61 @@ void GeometryApp::createGeometry() {
     cout << "asset path="<<getAssetPath("arm.obj").c_str() << "\n";
     igl::read_triangle_mesh(getAssetPath("arm.obj").c_str(),V,F );
     cout << "size of V="<<V.rows() << "\n";
-    gl::testgl();
+    // GLuint V_vbo_id,F_vbo_id;
+    igl::viewer::ViewerData data;
+    data.set_mesh(V, F);
+    // vector<vec3> positions = {
+    //   vec3( +0.5, +0.5, +0.5 ),
+    //   vec3( +0.5, +0.5, -0.5 ),
+    //   vec3( +0.5, -0.5, +0.5 ),
+    //   vec3( +0.5, -0.5, -0.5 ),
+    //   vec3( -0.5, +0.5, +0.5 ),
+    //   vec3( -0.5, +0.5, -0.5 ),
+    //   vec3( -0.5, -0.5, +0.5 ),
+    //   vec3( -0.5, -0.5, -0.5 ),
+    // };
+    vector<float> positionsArray={
+       +0.5, +0.5, +0.5 ,
+       +0.5, +0.5, -0.5 ,
+       +0.5, -0.5, +0.5 ,
+       +0.5, -0.5, -0.5 ,
+       -0.5, +0.5, +0.5 ,
+       -0.5, +0.5, -0.5 ,
+       -0.5, -0.5, +0.5 ,
+       -0.5, -0.5, -0.5 ,
+    };
+    // glm::vec3& v = *((glm::vec3*) fArray);
+    vec3 *test= (glm::vec3*)&positionsArray[0];
+    vector<vec3> positions(test,positionsArray.size()/3+test);
+    // cout << "vec3:"<<test[0].x << "\n";
+    // Lines by axis
+    // X: 0-4, 1-5, 2-6, 3-7
+    // Y: 0-2, 1-3, 4-6, 5-7
+    // Z: 0-1, 2-3, 4-5, 6-7
+    vector<uint> indices = {
+      0, 4, 1, 5, 2, 6, 3, 7,
+      0, 2, 1, 3, 4, 6, 5, 7,
+      0, 1, 2, 3, 4, 5, 6, 7,
+    };
+    gl::VboMeshRef vboMesh;
+    vector<gl::VboMesh::Layout> bufferLayout = {
+      gl::VboMesh::Layout().usage( GL_STATIC_DRAW ).attrib( geom::Attrib::POSITION, 3 ),
+    };
+    vboMesh = gl::VboMesh::create(positions.size(), GL_LINES, bufferLayout, indices.size(), GL_UNSIGNED_SHORT);
+    // vboMesh->bufferAttrib(geom::Attrib::POSITION, positions.size()*sizeof(double), &positions[0]);
+    // vboMesh->bufferAttrib(geom::Attrib::POSITION, V.rows()*3*sizeof(double), V.transpose().data());
+    vboMesh->bufferAttrib( geom::Attrib::POSITION, positions );
+    vboMesh->bufferIndices( indices.size() * sizeof( uint ), indices.data() );
+    if (mPhongShader)
+      // mPrimitive = gl::Batch::create(vboMesh, mPhongShader);
+      mPrimitive = gl::Batch::create(vboMesh, mWireShader);
+    // gl::testgl();
     // auto plane = geom::Plane().size( vec2( 20, 20 ) ).subdivisions( ivec2( 200, 50 ) );
     // auto mVboMesh =gl::VboMesh::create(plane);
     // if (mPhongShader)
-      // mPrimitive = gl::Batch::create(V, F, mPhongShader);
+    //   mPrimitive = gl::Batch::create(V, F, mPhongShader);
     // cout << "VBOMesh" << "\n"; 
-    ObjLoader loader(loadFile(getAssetPath("arm.obj").c_str()));
+    // ObjLoader loader(loadFile(getAssetPath("arm.obj").c_str()));
     break;
 
   }
