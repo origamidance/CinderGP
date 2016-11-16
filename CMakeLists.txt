@@ -21,8 +21,6 @@ include_directories("/usr/include/eigen3")
 include_directories("/usr/include/eigen3/unsupported")
 
 set(CI_APP_SOURCES ${CMAKE_CURRENT_LIST_DIR}/src/CinderGP.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/src/CinderLibIgl.h
-  ${CMAKE_CURRENT_LIST_DIR}/src/CinderLibIgl.cpp
 )
 
 ci_make_app(
@@ -36,5 +34,5 @@ project( BasicApp )
 ci_make_app(
 	SOURCES     ${CMAKE_CURRENT_LIST_DIR}/src/BasicApp.cpp
 	CINDER_PATH ${CINDER_PATH}
-	BLOCKS      Cinder-ImGui
+	BLOCKS      Cinder-ImGui Cinder-LibIgl
 )

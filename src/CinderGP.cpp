@@ -18,7 +18,7 @@
 #include <igl/read_triangle_mesh.h>
 #include <igl/opengl/create_mesh_vbo.h>
 #include <igl/viewer/ViewerData.h>
-#include "CinderLibIgl.h"
+// #include "CinderLibIgl.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -78,6 +78,8 @@ private:
                       const geom::Source &sourceWire);
   // void createParams();
   // void updateParams();
+
+  Color mBackGroundColor=Color::white();
 
   Primitive mPrimitiveSelected;
   Primitive mPrimitiveCurrent;
@@ -225,7 +227,7 @@ void GeometryApp::update() {
 
 void GeometryApp::draw() {
   // Prepare for drawing.
-  gl::clear();
+  gl::clear(mBackGroundColor);
   gl::setMatrices(mCamera);
 
   // Enable the depth buffer.
@@ -1096,5 +1098,7 @@ void GeometryApp::updateUI() {
     };
     ui::Checkbox("Show Wire Primitive", &mShowWirePrimitive);
     ui::Checkbox("Show Solid Primitive", &mShowSolidPrimitive);
+    if(ui::ColorPicker3("Background color", (float*)&mBackGroundColor)){
+    }
   }
 }
