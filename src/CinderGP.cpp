@@ -51,7 +51,7 @@ public:
     PRIMITIVE_COUNT
   };
   enum Quality { LOW, DEFAULT, HIGH };
-  enum ViewMode { SHADED, WIREFRAME };
+  enum ViewMode { PHONG, WIREFRAME, LAMBERT };
   enum TexturingMode { NONE, PROCEDURAL, SAMPLER };
 
   void setup() override;
@@ -70,6 +70,7 @@ public:
 
 private:
   void createGrid();
+  void createLambertShader();
   void createPhongShader();
   void createWireShader();
   void createWireframeShader();
@@ -87,6 +88,7 @@ private:
   Quality mQualityCurrent;
   ViewMode mViewMode;
   int mTexturingMode;
+  Color mPrimitiveColor;
 
   bool mShowColors;
   bool mShowNormals, mShowTangents;
@@ -104,11 +106,13 @@ private:
   gl::VertBatchRef mGrid;
 
   gl::BatchRef mPrimitive;
+  gl::BatchRef mPrimitiveLambert;
   gl::BatchRef mPrimitiveWire;
   gl::BatchRef mPrimitiveWireframe;
   gl::BatchRef mPrimitiveNormalLines, mPrimitiveTangentLines;
 
   gl::GlslProgRef mPhongShader;
+  gl::GlslProgRef mLambertShader;
   gl::GlslProgRef mWireShader;
   gl::GlslProgRef mWireframeShader;
 
@@ -168,7 +172,8 @@ void GeometryApp::setup() {
   mPrimitiveSelected = mPrimitiveCurrent = VBOMESH;
   mQualitySelected = mQualityCurrent = HIGH;
   mTexturingMode = PROCEDURAL;
-  mViewMode = SHADED;
+  mViewMode = LAMBERT;
+  mPrimitiveColor= Color::white();
   mLastMouseDownTime = 0;
   mShowColors = false;
   mShowNormals = false;
@@ -189,6 +194,7 @@ void GeometryApp::setup() {
   mCamUi = CameraUi(&mCamera);
 
   // Load and compile the shaders.
+  createLambertShader();
   createPhongShader();
   createWireShader();
   createWireframeShader();
@@ -281,10 +287,15 @@ void GeometryApp::draw() {
 
         mWireframeShader->uniform("uBrightness", 1.0f);
         mPrimitiveWireframe->draw();
-      } else {
+      } else if(mViewMode == PHONG)
+        {
+          gl::ScopedFaceCulling cullScope(mEnableFaceFulling, GL_BACK);
+          mPrimitive->draw();
+        }
+      else{
         gl::ScopedFaceCulling cullScope(mEnableFaceFulling, GL_BACK);
-
-        mPrimitive->draw();
+        gl::ScopedColor colorScope(mPrimitiveColor);
+        mPrimitiveLambert->draw();
       }
     }
   }
@@ -305,20 +316,6 @@ void GeometryApp::draw() {
 
   // Disable the depth buffer.
   gl::disableDepthRead();
-
-  // 	// Render the parameter windows.
-  // #if ! defined( CINDER_GL_ES )
-  // 	if( mParams ) {
-  // 		mParams->draw();
-  // 	}
-  // #endif
-
-  // // Draw fps
-  // ui::Text("fps = %f",ci::app::AppBase::getAverageFps());
-  // ui::ShowTestWindow();
-  // ui::Text("lalala");
-  // float test[4];
-  // ui::ColorPicker4("haha",test);
 }
 
 void GeometryApp::mouseDown(MouseEvent event) {
@@ -367,10 +364,11 @@ void GeometryApp::keyDown(KeyEvent event) {
     break;
 #if !defined(CINDER_GL_ES)
   case KeyEvent::KEY_v:
-    if (mViewMode == WIREFRAME)
-      mViewMode = SHADED;
-    else
-      mViewMode = WIREFRAME;
+    // if (mViewMode == WIREFRAME)
+    //   mViewMode = SHADED;
+    // else
+    //   mViewMode = WIREFRAME;
+    mViewMode= ViewMode((int)(mViewMode+ 1) % 3);
     break;
 #endif
   case KeyEvent::KEY_w:
@@ -394,121 +392,6 @@ void GeometryApp::fileDrop(FileDropEvent event) {
   } catch (const std::exception &exc) {
   }
 }
-
-// void GeometryApp::createParams()
-// {
-// #if ! defined( CINDER_GL_ES )
-// 	vector<string> primitives = { "Capsule", "Cone", "Cube", "Cylinder",
-// "Helix", "Icosahedron", "Icosphere", "Sphere", "Teapot", "Torus", "Torus
-// Knot", "Plane", "Rectangle", "Rounded Rectangle", "Circle", "Ring" };
-// 	vector<string> qualities = { "Low", "Default", "High" };
-// 	vector<string> viewModes = { "Shaded", "Wireframe" };
-// 	vector<string> texturingModes = { "None", "Procedural", "Sampler" };
-
-// 	mParams = params::InterfaceGl::create( getWindow(), "Geometry Demo",
-// toPixels( ivec2( 300, 400 ) ) );
-// 	mParams->setOptions( "", "valueswidth=100 refresh=0.1" );
-
-// 	mParams->addParam( "Primitive", primitives, (int*)&mPrimitiveSelected
-// ).updateFn( std::bind( &GeometryApp::updateParams, this ) );
-// 	mParams->addParam( "Quality", qualities, (int*)&mQualitySelected );
-// 	mParams->addParam( "Viewing Mode", viewModes, (int*)&mViewMode );
-// 	mParams->addParam( "Texturing Mode", texturingModes,
-// (int*)&mTexturingMode );
-
-// 	mParams->addSeparator();
-
-// 	mParams->addParam( "Show Grid", &mShowGrid );
-// 	mParams->addParam( "Show Normals", &mShowNormals );
-// 	mParams->addParam( "Show Tangents", &mShowTangents );
-// 	mParams->addParam( "Show Colors", &mShowColors ).updateFn( [this] {
-// createGeometry(); } );
-// 	mParams->addParam( "Face Culling", &mEnableFaceFulling ).updateFn(
-// [this] { gl::enableFaceCulling( mEnableFaceFulling ); } );
-
-// 	mParams->addSeparator();
-
-// 	mParams->addParam( "Show Wire Primitive", &mShowWirePrimitive );
-// 	mParams->addParam( "Show Solid Primitive", &mShowSolidPrimitive );
-
-// 	mParams->addSeparator();
-
-// 	//
-// 	mPrimitiveParams.resize( PRIMITIVE_COUNT );
-
-// 	// Capsule
-// 	mPrimitiveParams[CAPSULE].push_back( mParams->addParam( "Capsule:
-// Radius", &mCapsuleRadius ).step( 0.01f ).updateFn( [this] { createGeometry();
-// } ) );
-// 	mPrimitiveParams[CAPSULE].push_back( mParams->addParam( "Capsule:
-// Length", &mCapsuleLength ).step( 0.05f ).updateFn( [this] { createGeometry();
-// } ) );
-
-// 	// Cone
-// 	mPrimitiveParams[CONE].push_back( mParams->addParam( "Cone: Ratio",
-// &mConeRatio ).step( 0.01f ).updateFn( [this] { createGeometry(); } ) );
-
-// 	// Helix
-// 	mPrimitiveParams[HELIX].push_back( mParams->addParam( "Helix: Ratio",
-// &mHelixRatio ).step( 0.01f ).updateFn( [this] { createGeometry(); } ) );
-// 	mPrimitiveParams[HELIX].push_back( mParams->addParam( "Helix: Coils",
-// &mHelixCoils ).step( 0.1f ).updateFn( [this] { createGeometry(); } ) );
-// 	mPrimitiveParams[HELIX].push_back( mParams->addParam( "Helix: Twist",
-// &mHelixTwist ).updateFn( [this] { createGeometry(); } ) );
-// 	mPrimitiveParams[HELIX].push_back( mParams->addParam( "Helix: Twist
-// Offset", &mHelixOffset ).step( 0.05f ).updateFn( [this] { createGeometry(); }
-// ) );
-
-// 	// Ring
-// 	mPrimitiveParams[RING].push_back( mParams->addParam( "Ring: Width",
-// &mRingWidth ).step( 0.01f ).updateFn( [this] { createGeometry(); } ) );
-
-// 	// Rounded Rect
-// 	mPrimitiveParams[ROUNDEDRECT].push_back( mParams->addParam( "Corner
-// Radius", &mRoundedRectRadius ).step( 0.01f ).updateFn( [this] {
-// createGeometry(); } ) );
-
-// 	// Torus
-// 	mPrimitiveParams[TORUS].push_back( mParams->addParam( "Torus: Ratio",
-// &mTorusRatio ).step( 0.01f ).updateFn( [this] { createGeometry(); } ) );
-// 	mPrimitiveParams[TORUS].push_back( mParams->addParam( "Torus: Twist",
-// &mTorusTwist ).updateFn( [this] { createGeometry(); } ) );
-// 	mPrimitiveParams[TORUS].push_back( mParams->addParam( "Torus: Twist
-// Offset", &mTorusOffset ).step( 0.05f ).updateFn( [this] { createGeometry(); }
-// ) );
-
-// 	// Torus Knot
-// 	mPrimitiveParams[TORUSKNOT].push_back( mParams->addParam( "Torus Knot:
-// Parameter P", &mTorusKnotP ).updateFn( [this] { createGeometry(); } ) );
-// 	mPrimitiveParams[TORUSKNOT].push_back( mParams->addParam( "Torus Knot:
-// Parameter Q", &mTorusKnotQ ).updateFn( [this] { createGeometry(); } ) );
-// 	mPrimitiveParams[TORUSKNOT].push_back( mParams->addParam( "Torus Knot:
-// Scale X", &mTorusKnotScale.x ).step( 0.1f ).updateFn( [this] {
-// createGeometry(); } ) );
-// 	mPrimitiveParams[TORUSKNOT].push_back( mParams->addParam( "Torus Knot:
-// Scale Y", &mTorusKnotScale.y ).step( 0.1f ).updateFn( [this] {
-// createGeometry(); } ) );
-// 	mPrimitiveParams[TORUSKNOT].push_back( mParams->addParam( "Torus Knot:
-// Scale Z", &mTorusKnotScale.z ).step( 0.1f ).updateFn( [this] {
-// createGeometry(); } ) );
-// 	mPrimitiveParams[TORUSKNOT].push_back( mParams->addParam( "Torus Knot:
-// Radius", &mTorusKnotRadius ).step( 0.05f ).updateFn( [this] {
-// createGeometry(); } ) );
-
-// 	updateParams();
-// #endif
-// }
-
-// void GeometryApp::updateParams()
-// {
-// #if ! defined( CINDER_GL_ES )
-// 	for( int i = 0; i < mPrimitiveParams.size(); ++i ) {
-// 		for( auto &param : mPrimitiveParams[i] ) {
-// 			param.setVisible( i == mPrimitiveSelected );
-// 		}
-// 	}
-// #endif
-// }
 
 void GeometryApp::createGrid() {
   mGrid = gl::VertBatch::create(GL_LINES);
@@ -825,7 +708,10 @@ void GeometryApp::createGeometry() {
     Eigen::MatrixXd V;
     Eigen::MatrixXi F;
     // cout << "asset path="<<getAssetPath("cow.off").c_str() << "\n";
+    // auto lambert=gl::ShaderDef().lambert().color();
+    // mLambertShader=gl::getStockShader(lambert);
     igl::read_triangle_mesh("/home/origamidance/dependencies/libigl/tutorial/shared/cow.off",V,F );
+
     // cout << "size of V="<<V.rows() << "\n";
     // GLuint V_vbo_id,F_vbo_id;
     igl::viewer::ViewerData data;
@@ -859,12 +745,6 @@ void GeometryApp::createGeometry() {
     Eigen::MatrixXf V_normals_vbo;
     V_normals_vbo = (data.V_normals.transpose()).cast<float>();
     triMesh.appendNormals((glm::vec3*)V_normals_vbo.data(), V.rows());
-   // for (int i=0; i < V.rows(); i++) {
-   //   cout << test[i] << "\n";
-   // }
-    // triMesh.appendTriangle(0,1 ,2);
-    // cout << "trimesh verts:"<<triMesh.getNumVertices() << "\n";
-    // cout << "trimesh indices:"<<triMesh.getNumIndices() << "\n";
     vec3 a,b,c;
     triMesh.getTriangleNormals(0, &a, &b, &c);
     // triMesh.getTriangleVertices(1, &a, &b, &c);
@@ -873,26 +753,12 @@ void GeometryApp::createGeometry() {
     if (mPhongShader)
       {
         mPrimitive = gl::Batch::create(triMesh,mPhongShader);
+        // mPrimitive = gl::Batch::create(triMesh,mLambertShader);
       }
-    // gl::VboMeshRef vboMesh;
-    // vector<gl::VboMesh::Layout> bufferLayout = {
-    //   gl::VboMesh::Layout().usage( GL_STATIC_DRAW ).attrib( geom::Attrib::POSITION, 3 ),
-    // };
-    // vboMesh = gl::VboMesh::create(positions.size(), GL_LINES, bufferLayout, indices.size(), GL_UNSIGNED_SHORT);
-    // // vboMesh->bufferAttrib(geom::Attrib::POSITION, positions.size()*sizeof(double), &positions[0]);
-    // // vboMesh->bufferAttrib(geom::Attrib::POSITION, V.rows()*3*sizeof(double), V.transpose().data());
-    // vboMesh->bufferAttrib( geom::Attrib::POSITION, positions );
-    // vboMesh->bufferIndices( indices.size() * sizeof( uint ), indices.data() );
-    // if (mPhongShader)
-    //   // mPrimitive = gl::Batch::create(vboMesh, mPhongShader);
-    //   mPrimitive = gl::Batch::create(vboMesh, mWireShader);
-    // // gl::testgl();
-    // // auto plane = geom::Plane().size( vec2( 20, 20 ) ).subdivisions( ivec2( 200, 50 ) );
-    // // auto mVboMesh =gl::VboMesh::create(plane);
-    // // if (mPhongShader)
-    // //   mPrimitive = gl::Batch::create(V, F, mPhongShader);
-    // // cout << "VBOMesh" << "\n"; 
-    // // ObjLoader loader(loadFile(getAssetPath("arm.obj").c_str()));
+    if (mLambertShader)
+      {
+        mPrimitiveLambert = gl::Batch::create(triMesh, mLambertShader);
+      }
     break;
 
   }
@@ -916,6 +782,9 @@ void GeometryApp::loadGeomSource(const geom::Source &source,
   if (mPhongShader)
     mPrimitive = gl::Batch::create(mesh, mPhongShader);
 
+  if (mLambertShader)
+    mPrimitiveLambert = gl::Batch::create(mesh, mLambertShader);
+
   if (mWireShader)
     mPrimitiveWire = gl::Batch::create(sourceWire, mWireShader);
 
@@ -937,6 +806,14 @@ void GeometryApp::loadGeomSource(const geom::Source &source,
   getWindow()->setTitle("Geometry - " + to_string(mesh.getNumVertices()) +
                         " vertices - " +
                         to_string(sourceWire.getNumVertices() / 2) + " lines ");
+}
+
+void GeometryApp::createLambertShader(){
+  try{
+    mLambertShader=gl::getStockShader(gl::ShaderDef().lambert().color());
+  } catch (Exception &exc){
+    CI_LOG_E("error loading lambert sader:" << exc.what());
+  }
 }
 
 void GeometryApp::createPhongShader() {
@@ -989,7 +866,7 @@ void GeometryApp::initUI() { ui::initialize(); }
  */
 void GeometryApp::updateUI() {
   // The view options
-  // ui::ShowTestWindow();
+  ui::ShowTestWindow();
   {
     vector<string> primitives = {"Capsule",    "Cone",
                                  "Cube",       "Cylinder",
@@ -1000,13 +877,14 @@ void GeometryApp::updateUI() {
                                  "Rectangle",  "Rounded Rectangle",
                                  "Circle",     "Ring",    "VBOMesh"};
     vector<string> qualities = {"Low", "Default", "High"};
-    vector<string> viewModes = {"Shaded", "Wireframe"};
+    // vector<string> viewModes = {"Phong", "Wireframe","Lambert"};
+    vector<string> viewModes = {"Phong", "Wireframe","Lambert"};
     vector<string> texturingModes = {"None", "Procedural", "Sampler"};
 
     ui::ScopedWindow viewOptions("View options",
                                  ImGuiWindowFlags_AlwaysAutoResize);
     static int nPrimitiveSelected = mPrimitiveSelected;
-    ui::Combo("Primitive", (int *)&mPrimitiveSelected, primitives);
+    if (ui::Combo("Primitive", (int *)&mPrimitiveSelected, primitives)){
     switch ((int)mPrimitiveSelected) {
     // Capsule
     case CAPSULE:
@@ -1084,6 +962,7 @@ void GeometryApp::updateUI() {
       };
       break;
     }
+    }
     ui::Combo("Quality", (int *)&mQualitySelected, qualities);
     ui::Combo("Viewing Mode", (int *)&mViewMode, viewModes);
     ui::Combo("Texturing Mode", (int *)&mTexturingMode, texturingModes);
@@ -1098,7 +977,11 @@ void GeometryApp::updateUI() {
     };
     ui::Checkbox("Show Wire Primitive", &mShowWirePrimitive);
     ui::Checkbox("Show Solid Primitive", &mShowSolidPrimitive);
-    if(ui::ColorPicker3("Background color", (float*)&mBackGroundColor)){
+    if(ui::CollapsingHeader("Background Color" )){
+      ui::ColorPicker3("", (float*)&mBackGroundColor);
+    }
+    if(ui::CollapsingHeader("Primitive Color" )){
+      ui::ColorPicker3("", (float*)&mPrimitiveColor);
     }
   }
 }
