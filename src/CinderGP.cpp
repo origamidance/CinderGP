@@ -89,6 +89,7 @@ private:
   ViewMode mViewMode;
   int mTexturingMode;
   Color mPrimitiveColor;
+  Color mWireColor;
 
   bool mShowColors;
   bool mShowNormals, mShowTangents;
@@ -174,6 +175,7 @@ void GeometryApp::setup() {
   mTexturingMode = PROCEDURAL;
   mViewMode = LAMBERT;
   mPrimitiveColor= Color::white();
+  mWireColor= Color::black();
   mLastMouseDownTime = 0;
   mShowColors = false;
   mShowNormals = false;
@@ -263,11 +265,17 @@ void GeometryApp::draw() {
     }
 
     // Draw the wire primitive.
-    if (mShowWirePrimitive && mPrimitiveWire) {
-      gl::ScopedColor color(Color(1, 1, 1));
-      gl::ScopedLineWidth linewidth(2.5f);
+    // if (mShowWirePrimitive && mPrimitiveWire) {
+    if (mShowWirePrimitive) {
+      gl::ScopedColor color(mWireColor);
+      // gl::ScopedLineWidth linewidth(2.5f);
 
+      gl::enableWireframe();
+      glEnable( GL_POLYGON_OFFSET_LINE );
+      glPolygonOffset( -1, -1 );
       mPrimitiveWire->draw();
+      glDisable( GL_POLYGON_OFFSET_LINE );
+      gl::disableWireframe();
     }
 
     // Draw the primitive.
@@ -707,13 +715,7 @@ void GeometryApp::createGeometry() {
   case VBOMESH:
     Eigen::MatrixXd V;
     Eigen::MatrixXi F;
-    // cout << "asset path="<<getAssetPath("cow.off").c_str() << "\n";
-    // auto lambert=gl::ShaderDef().lambert().color();
-    // mLambertShader=gl::getStockShader(lambert);
     igl::read_triangle_mesh("/home/origamidance/dependencies/libigl/tutorial/shared/cow.off",V,F );
-
-    // cout << "size of V="<<V.rows() << "\n";
-    // GLuint V_vbo_id,F_vbo_id;
     igl::viewer::ViewerData data;
     data.set_mesh(V, F);
     float positionsArray[]={
@@ -747,17 +749,18 @@ void GeometryApp::createGeometry() {
     triMesh.appendNormals((glm::vec3*)V_normals_vbo.data(), V.rows());
     vec3 a,b,c;
     triMesh.getTriangleNormals(0, &a, &b, &c);
-    // triMesh.getTriangleVertices(1, &a, &b, &c);
-    cout << "trimesh triangles"<< a<< "\n"<<b<< "\n"<<c<<"\n";
-    // cout << "trimesh triangles igl"<< V<< "\n";
+    mPrimitiveWire = gl::Batch::create(triMesh, gl::getStockShader(gl::ShaderDef().color()));
     if (mPhongShader)
       {
         mPrimitive = gl::Batch::create(triMesh,mPhongShader);
-        // mPrimitive = gl::Batch::create(triMesh,mLambertShader);
       }
     if (mLambertShader)
       {
         mPrimitiveLambert = gl::Batch::create(triMesh, mLambertShader);
+      }
+    if(mWireframeShader)
+      {
+        mPrimitiveWireframe = gl::Batch::create(triMesh, mWireframeShader);
       }
     break;
 
@@ -786,7 +789,8 @@ void GeometryApp::loadGeomSource(const geom::Source &source,
     mPrimitiveLambert = gl::Batch::create(mesh, mLambertShader);
 
   if (mWireShader)
-    mPrimitiveWire = gl::Batch::create(sourceWire, mWireShader);
+    // mPrimitiveWire = gl::Batch::create(sourceWire, mWireShader);
+    mPrimitiveWire = gl::Batch::create(mesh, gl::getStockShader(gl::ShaderDef().color()));
 
   if (mWireframeShader)
     mPrimitiveWireframe = gl::Batch::create(mesh, mWireframeShader);
@@ -978,10 +982,16 @@ void GeometryApp::updateUI() {
     ui::Checkbox("Show Wire Primitive", &mShowWirePrimitive);
     ui::Checkbox("Show Solid Primitive", &mShowSolidPrimitive);
     if(ui::CollapsingHeader("Background Color" )){
-      ui::ColorPicker3("", (float*)&mBackGroundColor);
+      ui::ColorEdit3("background", (float*)&mBackGroundColor);
+      // ui::ColorPicker3("##background", (float*)&mBackGroundColor);
     }
     if(ui::CollapsingHeader("Primitive Color" )){
-      ui::ColorPicker3("", (float*)&mPrimitiveColor);
+      ui::ColorEdit3("primitive", (float*)&mPrimitiveColor);
+      // ui::ColorPicker3("primitive", (float*)&mPrimitiveColor);
+    }
+    if(ui::CollapsingHeader("Wire Color" )){
+      ui::ColorEdit3("wire", (float*)&mWireColor);
+      // ui::ColorPicker3("wire", (float*)&mWireColor);
     }
   }
 }
