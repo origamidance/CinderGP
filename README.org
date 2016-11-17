@@ -1,2 +1,4 @@
 * cinderGP
-[[./Preview.png]]
+Cinder based geometry processing skeleton.
+** Preview
+ [[./Preview.png]]
