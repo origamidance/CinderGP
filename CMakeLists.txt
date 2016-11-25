@@ -16,7 +16,7 @@ include( "${CINDER_PATH}/proj/cmake/modules/cinderMakeApp.cmake" )
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/bin)
 
-include_directories("/home/origamidance/dependencies/libigl/include")
+# include_directories("/home/origamidance/dependencies/libigl/include")
 include_directories("/usr/include/eigen3")
 include_directories("/usr/include/eigen3/unsupported")
 
@@ -26,7 +26,7 @@ set(CI_APP_SOURCES ${CMAKE_CURRENT_LIST_DIR}/src/CinderGP.cpp
 ci_make_app(
 	SOURCES     ${CI_APP_SOURCES}
 	CINDER_PATH ${CINDER_PATH}
-	BLOCKS      Cinder-ImGui
+	BLOCKS      Cinder-ImGui Cinder-LibIgl
 )
 
 project( BasicApp )
@@ -34,5 +34,5 @@ project( BasicApp )
 ci_make_app(
 	SOURCES     ${CMAKE_CURRENT_LIST_DIR}/src/BasicApp.cpp
 	CINDER_PATH ${CINDER_PATH}
-	BLOCKS      Cinder-ImGui Cinder-LibIgl
+	BLOCKS      Cinder-ImGui
 )
