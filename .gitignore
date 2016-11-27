@@ -39,3 +39,8 @@ bin/*
 # Generated py files
 __*
 .ycm*
+
+# GTAGS file
+GPATH
+GRTAGS
+GTAGS
