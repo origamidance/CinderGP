@@ -36,3 +36,11 @@ ci_make_app(
 	CINDER_PATH ${CINDER_PATH}
 	BLOCKS      Cinder-ImGui
 )
+
+project( testApp )
+
+ci_make_app(
+	SOURCES     ${CMAKE_CURRENT_LIST_DIR}/src/testApp.cpp
+	CINDER_PATH ${CINDER_PATH}
+	BLOCKS      Cinder-ImGui
+)

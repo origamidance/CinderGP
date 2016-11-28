@@ -66,7 +66,7 @@ class GeometryApp : public App {
   void fileDrop(FileDropEvent event) override;
 
   void initUI();
-  void updateUI();
+  void drawUI();
 
  private:
   void createGrid();
@@ -241,13 +241,12 @@ void GeometryApp::update() {
     mCameraTarget = lerp(mCameraTarget, mCameraLerpTarget, 0.25f);
     mCamera.lookAt(eye, mCameraTarget);
   }
-  updateUI();
 }
 
 void GeometryApp::draw() {
-  int w = getWindowWidth();
-  int h = getWindowHeight();
-  gl::viewport(0, 0, w / 2, h / 2);
+  // int w = getWindowWidth();
+  // int h = getWindowHeight();
+  // gl::viewport(0, 0, w / 2, h / 2);
   // Prepare for drawing.
   gl::clear(mBackGroundColor);
   gl::setMatrices(mCamera);
@@ -339,7 +338,8 @@ void GeometryApp::draw() {
 
   // Disable the depth buffer.
   gl::disableDepthRead();
-  gl::viewport(0, 0, w, h);
+  // gl::viewport(0, 0, w, h);
+  drawUI();
 }
 
 void GeometryApp::mouseDown(MouseEvent event) {
@@ -850,9 +850,6 @@ void GeometryApp::createWireframeShader() {
 #endif  // ! defined( CINDER_GL_ES )
 }
 
-CINDER_APP(GeometryApp,
-           RendererGl(RendererGl::Options().msaa(16)),
-           prepareSettings)
 /**
  * @name initUI - Initializes the Imgui
  * @return void
@@ -861,10 +858,10 @@ void GeometryApp::initUI() {
   ui::initialize();
 }
 /**
- * @name updateUI - Updates the Imgui
+ * @name drawUI - draws the Imgui
  * @return void
  */
-void GeometryApp::updateUI() {
+void GeometryApp::drawUI() {
   // The view options
   ui::ShowTestWindow();
   {
@@ -1019,3 +1016,7 @@ void GeometryApp::updateUI() {
     ui::Text("Wire Color(click to edit)");
   }
 }
+
+CINDER_APP(GeometryApp,
+           RendererGl(RendererGl::Options().msaa(16)),
+           prepareSettings)
