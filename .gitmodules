@@ -7,3 +7,6 @@
 [submodule "Cinder-LibIgl"]
 	path = Cinder-LibIgl
 	url = https://github.com/origamidance/Cinder-LibIgl.git
+[submodule "Cinder-NFD"]
+	path = Cinder-NFD
+	url = https://github.com/origamidance/Cinder-NFD.git

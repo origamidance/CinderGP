@@ -19,6 +19,8 @@
 // #include <igl/opengl/create_mesh_vbo.h>
 #include <igl/read_triangle_mesh.h>
 #include <igl/viewer/ViewerData.h>
+#include "Grpah/ngraph.hpp"
+#include "nfd.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -68,6 +70,9 @@ class GeometryApp : public App {
   void initUI();
   void drawUI();
 
+  void testGraph();
+  void testNfd();
+
  private:
   void createGrid();
   void createLambertShader();
@@ -103,6 +108,7 @@ class GeometryApp : public App {
   bool mRecenterCamera;
   vec3 mCameraTarget, mCameraLerpTarget, mCameraViewDirection;
   double mLastMouseDownTime;
+  vec3 mCamRight, mCamUp;
 
   gl::VertBatchRef mGrid;
 
@@ -141,6 +147,8 @@ class GeometryApp : public App {
   int mTorusKnotQ;
   float mTorusKnotRadius;
   vec3 mTorusKnotScale;
+
+  IglMesh triMesh;
 
   // #if ! defined( CINDER_GL_ES )
   // 	params::InterfaceGlRef	mParams;
@@ -218,6 +226,8 @@ void GeometryApp::setup() {
 
   // Create a parameter window, so we can toggle stuff.
   // createParams();
+  // triMesh =
+  //     IglMesh("/home/origamidance/dependencies/libigl/tutorial/shared/cow.off");
 
   initUI();
 }
@@ -250,7 +260,7 @@ void GeometryApp::draw() {
   // Prepare for drawing.
   gl::clear(mBackGroundColor);
   gl::setMatrices(mCamera);
-
+  // cout<<"up direction: "<<mCamera.getWorldUp()<<"\n";
   // Enable the depth buffer.
   gl::enableDepthRead();
   gl::enableDepthWrite();
@@ -345,6 +355,8 @@ void GeometryApp::draw() {
 void GeometryApp::mouseDown(MouseEvent event) {
   mRecenterCamera = false;
 
+  mCamera.getBillboardVectors(&mCamRight, &mCamUp);
+  mCamera.setWorldUp(mCamUp);
   mCamUi.mouseDown(event);
 
   if (getElapsedSeconds() - mLastMouseDownTime < 0.2f) {
@@ -736,14 +748,7 @@ void GeometryApp::createGeometry() {
       }
       break;
     case VBOMESH:
-      Eigen::MatrixXd V;
-      Eigen::MatrixXi F;
-      // igl::read_triangle_mesh(
-      //     "/home/origamidance/dependencies/libigl/tutorial/shared/cow.off",
-      //     V,
-      //     F);
-      IglMesh triMesh = IglMesh(
-          "/home/origamidance/dependencies/libigl/tutorial/shared/cow.off");
+      // IglMesh triMesh = IglMesh(getAssetPath("Monster_remesh.stl").string());
       mPrimitiveWire = gl::Batch::create(
           triMesh, gl::getStockShader(gl::ShaderDef().color()));
       if (mPhongShader) {
@@ -1014,6 +1019,53 @@ void GeometryApp::drawUI() {
     }
     ui::SameLine();
     ui::Text("Wire Color(click to edit)");
+    if (ui::Button("testGraph")) {
+      testGraph();
+    }
+    if (ui::Button("testNfd")) {
+      testNfd();
+    }
+  }
+}
+
+void GeometryApp::testGraph() {
+  cout << "gotcha!"
+       << "\n";
+  using namespace NGraph;
+  Graph A;
+  A.insert_edge(3, 4);
+  A.insert_edge(1, 2);
+  cout << "graph has:" << A.num_vertices() << "\n";
+}
+
+void GeometryApp::testNfd() {
+  nfdchar_t* outPath = NULL;
+  nfdresult_t result = NFD_OpenDialog("stl,obj,off", NULL, &outPath);
+  if (result == NFD_OKAY) {
+    puts("Success!");
+    puts(outPath);
+    // triMesh = IglMesh(string(outPath));
+    triMesh.loadMesh(string(outPath));
+    cout << "v size=" << triMesh.getV()->size() << "\n";
+    // mPrimitiveWire =
+    //     gl::Batch::create(triMesh,
+    //     gl::getStockShader(gl::ShaderDef().color()));
+    // if (mPhongShader) {
+    //   mPrimitive = gl::Batch::create(triMesh, mPhongShader);
+    // }
+    // if (mLambertShader) {
+    //   mPrimitiveLambert = gl::Batch::create(triMesh, mLambertShader);
+    // }
+    // if (mWireframeShader) {
+    //   mPrimitiveWireframe = gl::Batch::create(triMesh, mWireframeShader);
+    // }
+    mPrimitiveSelected = VBOMESH;
+    createGeometry();
+    free(outPath);
+  } else if (result == NFD_CANCEL) {
+    puts("User pressed cancel.");
+  } else {
+    printf("Error: %s\n", NFD_GetError());
   }
 }
 
