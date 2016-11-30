@@ -1,8 +1,0 @@
-/home/origamidance/Playground/CinderGP/cmake-build-release/CMakeFiles/edit_cache.dir
-/home/origamidance/Playground/CinderGP/cmake-build-release/CMakeFiles/testApp.dir
-/home/origamidance/Playground/CinderGP/cmake-build-release/CMakeFiles/BasicApp.dir
-/home/origamidance/Playground/CinderGP/cmake-build-release/CMakeFiles/Cinder-NFD.dir
-/home/origamidance/Playground/CinderGP/cmake-build-release/CMakeFiles/Cinder-LibIgl.dir
-/home/origamidance/Playground/CinderGP/cmake-build-release/CMakeFiles/Cinder-ImGui.dir
-/home/origamidance/Playground/CinderGP/cmake-build-release/CMakeFiles/rebuild_cache.dir
-/home/origamidance/Playground/CinderGP/cmake-build-release/CMakeFiles/CinderGP.dir
