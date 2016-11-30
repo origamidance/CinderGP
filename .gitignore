@@ -44,3 +44,7 @@ __*
 GPATH
 GRTAGS
 GTAGS
+
+# idea config
+.idea//
+.idea/*

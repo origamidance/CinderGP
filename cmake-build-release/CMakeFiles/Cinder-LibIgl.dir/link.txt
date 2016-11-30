@@ -1,0 +1,2 @@
+ccache /usr/bin/ar qc libCinder-LibIgl.a  CMakeFiles/Cinder-LibIgl.dir/Cinder-LibIgl/src/CinderLibIgl.cpp.o
+ccache /usr/bin/ranlib libCinder-LibIgl.a

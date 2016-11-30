@@ -108,7 +108,6 @@ class GeometryApp : public App {
   bool mRecenterCamera;
   vec3 mCameraTarget, mCameraLerpTarget, mCameraViewDirection;
   double mLastMouseDownTime;
-  vec3 mCamRight, mCamUp;
 
   gl::VertBatchRef mGrid;
 
@@ -251,6 +250,8 @@ void GeometryApp::update() {
     mCameraTarget = lerp(mCameraTarget, mCameraLerpTarget, 0.25f);
     mCamera.lookAt(eye, mCameraTarget);
   }
+  // mCamera.getBillboardVectors(&mCamRight, &mCamUp);
+  // mCamera.setWorldUp(mCamUp);
 }
 
 void GeometryApp::draw() {
@@ -355,8 +356,8 @@ void GeometryApp::draw() {
 void GeometryApp::mouseDown(MouseEvent event) {
   mRecenterCamera = false;
 
-  mCamera.getBillboardVectors(&mCamRight, &mCamUp);
-  mCamera.setWorldUp(mCamUp);
+  // mCamera.getBillboardVectors(&mCamRight, &mCamUp);
+  // mCamera.setWorldUp(mCamUp);
   mCamUi.mouseDown(event);
 
   if (getElapsedSeconds() - mLastMouseDownTime < 0.2f) {
@@ -1025,6 +1026,14 @@ void GeometryApp::drawUI() {
     if (ui::Button("testNfd")) {
       testNfd();
     }
+    ui::Text("fps=%f", getAverageFps());
+    ui::Text("EYE pos=%f,%f,%f", mCamera.getEyePoint().x,
+             mCamera.getEyePoint().y, mCamera.getEyePoint().z);
+
+    vec3 mCamUp, mCamRight;
+    mCamera.getBillboardVectors(&mCamUp, &mCamRight);
+    ui::Text("up dir=%f,%f,%f", mCamUp.x, mCamUp.y, mCamUp.z);
+    ui::Text("right dir=%f,%f,%f", mCamRight.x, mCamRight.y, mCamRight.z);
   }
 }
 

@@ -1,0 +1,7 @@
+/opt/clion/bin/cmake/bin/cmake -DCMAKE_BUILD_TYPE=Release -G "CodeBlocks - Unix Makefiles" /home/origamidance/Playground/CinderGP
+-- find ccache
+CINDER PATH= /home/origamidance/Playground/Cinder
+CINDER PATH= /home/origamidance/Playground/Cinder
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/origamidance/Playground/CinderGP/cmake-build-release
