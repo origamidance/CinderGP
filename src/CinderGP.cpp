@@ -1,4 +1,6 @@
-#include <Eigen/Core>
+// #define EIGEN_NO_DEBUG
+// #define EIGEN_NO_STATIC_ASSERT
+// #include <Eigen/Core>
 #include "CinderImGui.h"
 #include "CinderLibIgl.h"
 #include "cinder/Camera.h"
@@ -19,6 +21,8 @@
 // #include <igl/opengl/create_mesh_vbo.h>
 #include <igl/read_triangle_mesh.h>
 #include <igl/viewer/ViewerData.h>
+#include <igl/ray_mesh_intersect.h>
+#include <igl/Hit.h>
 #include "Grpah/ngraph.hpp"
 #include "nfd.h"
 
@@ -61,6 +65,7 @@ class GeometryApp : public App {
   void update() override;
   void draw() override;
 
+  void mouseMove(MouseEvent event) override;
   void mouseDown(MouseEvent event) override;
   void mouseDrag(MouseEvent event) override;
   void keyDown(KeyEvent event) override;
@@ -72,6 +77,9 @@ class GeometryApp : public App {
 
   void testGraph();
   void testNfd();
+  void testRay();
+  bool performPicking(vec3* pickedPoint, vec3* pickedNormal);
+  void drawCube(const AxisAlignedBox& bounds, const Color& color);
 
  private:
   void createGrid();
@@ -108,6 +116,10 @@ class GeometryApp : public App {
   bool mRecenterCamera;
   vec3 mCameraTarget, mCameraLerpTarget, mCameraViewDirection;
   double mLastMouseDownTime;
+  Eigen::Matrix4f modelMat;
+  Eigen::Matrix4f projMat;
+  Eigen::Matrix4f viewMat;
+  ivec2 mMousePos;
 
   gl::VertBatchRef mGrid;
 
@@ -148,6 +160,9 @@ class GeometryApp : public App {
   vec3 mTorusKnotScale;
 
   IglMesh triMesh;
+  gl::BatchRef mWireCube;
+  AxisAlignedBox mObjectBounds;  //! The object space bounding box of the mesh.
+  mat4 mTransform;  //! Transformations (translate, rotate, scale) of the mesh.
 
   // #if ! defined( CINDER_GL_ES )
   // 	params::InterfaceGlRef	mParams;
@@ -219,19 +234,34 @@ void GeometryApp::setup() {
   createWireShader();
   createWireframeShader();
 
+  triMesh =
+      IglMesh("/home/origamidance/dependencies/libigl/tutorial/shared/cow.off");
   // Create the meshes.
   createGrid();
   createGeometry();
 
   // Create a parameter window, so we can toggle stuff.
   // createParams();
-  // triMesh =
-  //     IglMesh("/home/origamidance/dependencies/libigl/tutorial/shared/cow.off");
+  // triMesh = TriMesh::create(geom::Teapot().subdivisions(6));
+  auto colorShader = gl::getStockShader(gl::ShaderDef().color());
+  mWireCube = gl::Batch::create(geom::WireCube(), colorShader);
 
   initUI();
 }
-
+/**
+ * @name update - Updates the  of type void
+ * @return void
+ */
 void GeometryApp::update() {
+  // Animate the mesh
+
+  // mTransform = mat4(1.0f);
+  // mTransform *=
+  //     rotate(sin((float)getElapsedSeconds() * 3.0f) * 0.08f, vec3(1, 0, 0));
+  // mTransform *= rotate((float)getElapsedSeconds() * 0.1f, vec3(0, 1, 0));
+  // mTransform *=
+  //     rotate(sin((float)getElapsedSeconds() * 4.3f) * 0.09f, vec3(0, 0, 1));
+
   // If another primitive or quality was selected, reset the subdivision and
   // recreate the primitive.
   if (mPrimitiveCurrent != mPrimitiveSelected ||
@@ -252,6 +282,11 @@ void GeometryApp::update() {
   }
   // mCamera.getBillboardVectors(&mCamRight, &mCamUp);
   // mCamera.setWorldUp(mCamUp);
+  // const float* glmMat = glm::value_ptr(gl::getModelView());
+  // Eigen::Matrix4f eigenMat(glm::value_ptr(gl::getModelView()));
+  modelMat = Eigen::Matrix4f(glm::value_ptr(gl::getModelMatrix()));
+  projMat = Eigen::Matrix4f(glm::value_ptr(gl::getProjectionMatrix()));
+  viewMat = Eigen::Matrix4f(glm::value_ptr(gl::getViewMatrix()));
 }
 
 void GeometryApp::draw() {
@@ -274,6 +309,7 @@ void GeometryApp::draw() {
 
     // Rotate it slowly around the y-axis.
     gl::ScopedModelMatrix matScope;
+    gl::multModelMatrix(mTransform);
     // gl::rotate( float( getElapsedSeconds() / 5 ), 0, 1, 0 );
 
     // Draw the normals.
@@ -329,6 +365,17 @@ void GeometryApp::draw() {
         mPrimitiveLambert->draw();
       }
     }
+
+    // Perform 3D picking now, so we can draw the result as a vector.
+    vec3 pickedPoint, pickedNormal;
+    if (performPicking(&pickedPoint, &pickedNormal)) {
+      gl::ScopedColor color(Color(0, 1, 0));
+
+      // Draw an arrow to the picked point along its normal.
+      gl::ScopedGlslProg shader(
+          gl::getStockShader(gl::ShaderDef().color().lambert()));
+      gl::drawVector(pickedPoint + pickedNormal, pickedPoint);
+    }
   }
 
   //
@@ -353,6 +400,10 @@ void GeometryApp::draw() {
   drawUI();
 }
 
+void GeometryApp::mouseMove(MouseEvent event) {
+  mMousePos = event.getPos();
+}
+
 void GeometryApp::mouseDown(MouseEvent event) {
   mRecenterCamera = false;
 
@@ -370,6 +421,7 @@ void GeometryApp::mouseDown(MouseEvent event) {
 }
 
 void GeometryApp::mouseDrag(MouseEvent event) {
+  mouseMove(event);
   mCamUi.mouseDrag(event);
 }
 
@@ -1026,14 +1078,33 @@ void GeometryApp::drawUI() {
     if (ui::Button("testNfd")) {
       testNfd();
     }
+    if (ui::Button("test ray")) {
+      testRay();
+    }
     ui::Text("fps=%f", getAverageFps());
+    ui::Text("Mouse pos=%d,%d", mMousePos.x, mMousePos.y);
     ui::Text("EYE pos=%f,%f,%f", mCamera.getEyePoint().x,
              mCamera.getEyePoint().y, mCamera.getEyePoint().z);
-
     vec3 mCamUp, mCamRight;
     mCamera.getBillboardVectors(&mCamUp, &mCamRight);
     ui::Text("up dir=%f,%f,%f", mCamUp.x, mCamUp.y, mCamUp.z);
     ui::Text("right dir=%f,%f,%f", mCamRight.x, mCamRight.y, mCamRight.z);
+    ui::Text("model matrix=%f,%f,%f,%f\n%f,%f,%f,%f\n%f,%f,%f,%f\n%f,%f,%f,%f",
+             modelMat(0, 0), modelMat(0, 1), modelMat(0, 2), modelMat(0, 3),
+             modelMat(1, 0), modelMat(1, 1), modelMat(1, 2), modelMat(1, 3),
+             modelMat(2, 0), modelMat(2, 1), modelMat(2, 2), modelMat(2, 3),
+             modelMat(3, 0), modelMat(3, 1), modelMat(3, 2), modelMat(3, 3));
+    ui::Text(
+        "projection matrix=%f,%f,%f,%f\n%f,%f,%f,%f\n%f,%f,%f,%f\n%f,%f,%f,%f",
+        projMat(0, 0), projMat(0, 1), projMat(0, 2), projMat(0, 3),
+        projMat(1, 0), projMat(1, 1), projMat(1, 2), projMat(1, 3),
+        projMat(2, 0), projMat(2, 1), projMat(2, 2), projMat(2, 3),
+        projMat(3, 0), projMat(3, 1), projMat(3, 2), projMat(3, 3));
+    ui::Text("view matrix=%f,%f,%f,%f\n%f,%f,%f,%f\n%f,%f,%f,%f\n%f,%f,%f,%f",
+             viewMat(0, 0), viewMat(0, 1), viewMat(0, 2), viewMat(0, 3),
+             viewMat(1, 0), viewMat(1, 1), viewMat(1, 2), viewMat(1, 3),
+             viewMat(2, 0), viewMat(2, 1), viewMat(2, 2), viewMat(2, 3),
+             viewMat(3, 0), viewMat(3, 1), viewMat(3, 2), viewMat(3, 3));
   }
 }
 
@@ -1055,19 +1126,8 @@ void GeometryApp::testNfd() {
     puts(outPath);
     // triMesh = IglMesh(string(outPath));
     triMesh.loadMesh(string(outPath));
-    cout << "v size=" << triMesh.getV()->size() << "\n";
-    // mPrimitiveWire =
-    //     gl::Batch::create(triMesh,
-    //     gl::getStockShader(gl::ShaderDef().color()));
-    // if (mPhongShader) {
-    //   mPrimitive = gl::Batch::create(triMesh, mPhongShader);
-    // }
-    // if (mLambertShader) {
-    //   mPrimitiveLambert = gl::Batch::create(triMesh, mLambertShader);
-    // }
-    // if (mWireframeShader) {
-    //   mPrimitiveWireframe = gl::Batch::create(triMesh, mWireframeShader);
-    // }
+    cout << "v size=" << triMesh.getV().size() << "\n";
+    mObjectBounds = triMesh.calcBoundingBox();
     mPrimitiveSelected = VBOMESH;
     createGeometry();
     free(outPath);
@@ -1078,6 +1138,102 @@ void GeometryApp::testNfd() {
   }
 }
 
+void GeometryApp::testRay() {
+  cout << "test ray!"
+       << "\n";
+  igl::Hit hit;
+  Eigen::RowVector3f eyePos(mCamera.getEyePoint().x, mCamera.getEyePoint().y,
+                            mCamera.getEyePoint().z);
+  Eigen::RowVector3f eyeDir(-eyePos.normalized());
+  // if (triMesh.getAABBTree().intersect_ray(triMesh.getV(), triMesh.getF(),
+  //                                         eyePos, eyeDir, hit)) {
+  //   cout << "gotcha!"
+  //        << "\n";
+  // };
+  cout << triMesh.getAABBTree().subtree_size() << "\n";
+}
+
+bool GeometryApp::performPicking(vec3* pickedPoint, vec3* pickedNormal) {
+  // Generate a ray from the camera into our world. Note that we have to
+  // flip the vertical coordinate.
+  float u = mMousePos.x / (float)getWindowWidth();
+  float v = mMousePos.y / (float)getWindowHeight();
+  Ray ray = mCamera.generateRay(u, 1.0f - v, mCamera.getAspectRatio());
+
+  // The coordinates of the bounding box are in object space, not world space,
+  // so if the model was translated, rotated or scaled, the bounding box would
+  // not
+  // reflect that. One solution would be to pass the transformation to the
+  // calcBoundingBox() function:
+  AxisAlignedBox worldBoundsExact =
+      triMesh.calcBoundingBox(mTransform);  // slow
+
+  // But if you already have an object space bounding box, it's much faster to
+  // approximate the world space bounding box like this:
+  AxisAlignedBox worldBoundsApprox =
+      mObjectBounds.transformed(mTransform);  // fast
+
+  // Draw the object space bounding box in yellow. It will not animate,
+  // because animation is done in world space.
+  drawCube(mObjectBounds, Color(1, 1, 0));
+
+  // Draw the exact bounding box in orange.
+  drawCube(worldBoundsExact, Color(1, 0.5f, 0));
+
+  // Draw the approximated bounding box in cyan.
+  drawCube(worldBoundsApprox, Color(0, 1, 1));
+
+  // Perform fast detection first - test against the bounding box itself.
+  if (!worldBoundsExact.intersects(ray))
+    return false;
+
+  // Set initial distance to something far, far away.
+  float result = FLT_MAX;
+
+  // Traverse triangle list and find the closest intersecting triangle.
+  const size_t polycount = triMesh.getNumTriangles();
+
+  float distance = 0.0f;
+  for (size_t i = 0; i < polycount; ++i) {
+    // Get a single triangle from the mesh.
+    vec3 v0, v1, v2;
+    triMesh.getTriangleVertices(i, &v0, &v1, &v2);
+
+    // Transform triangle to world space.
+    v0 = vec3(mTransform * vec4(v0, 1.0));
+    v1 = vec3(mTransform * vec4(v1, 1.0));
+    v2 = vec3(mTransform * vec4(v2, 1.0));
+
+    // Test to see if the ray intersects this triangle.
+    if (ray.calcTriangleIntersection(v0, v1, v2, &distance)) {
+      // Keep the result if it's closer than any intersection we've had so far.
+      if (distance < result) {
+        result = distance;
+
+        // Assuming this is the closest triangle, we'll calculate our normal
+        // while we've got all the points handy.
+        *pickedNormal = normalize(cross(v1 - v0, v2 - v0));
+      }
+    }
+  }
+
+  // Did we have a hit?
+  if (distance > 0) {
+    // Calculate the exact position of the hit.
+    *pickedPoint = ray.calcPosition(result);
+
+    return true;
+  } else
+    return false;
+}
+void GeometryApp::drawCube(const AxisAlignedBox& bounds, const Color& color) {
+  gl::ScopedColor clr(color);
+  gl::ScopedModelMatrix model;
+
+  gl::multModelMatrix(glm::translate(bounds.getCenter()) *
+                      glm::scale(bounds.getSize()));
+  mWireCube->draw();
+}
 CINDER_APP(GeometryApp,
            RendererGl(RendererGl::Options().msaa(16)),
            prepareSettings)

@@ -22,15 +22,6 @@ pkg_check_modules(GTK3 REQUIRED gtk+-3.0)
 # include_directories("/home/origamidance/dependencies/libigl/include")
 include_directories("/usr/include/eigen3")
 include_directories("/usr/include/eigen3/unsupported")
-# include_directories("/home/origamidance/dependencies/nativefiledialog/src/include")
-# Setup CMake to use GTK+, tell the compiler where to look for headers
-# and to the linker where to look for libraries
-# include_directories(${GTK3_INCLUDE_DIRS})
-# link_directories(${GTK3_LIBRARY_DIRS})
-# # Add other flags to the compiler
-# add_definitions(${GTK3_CFLAGS_OTHER})
-# link_directories("/home/origamidance/dependencies/nativefiledialog/build/lib/Release/x64")
-# link_directories("/home/origamidance/dependencies/nativefiledialog/cmake")
 
 set(CI_APP_SOURCES ${CMAKE_CURRENT_LIST_DIR}/src/CinderGP.cpp
 )
@@ -56,4 +47,11 @@ ci_make_app(
 	SOURCES     ${CMAKE_CURRENT_LIST_DIR}/src/testApp.cpp
 	CINDER_PATH ${CINDER_PATH}
 	BLOCKS      Cinder-ImGui
+)
+
+project( pickApp )
+
+ci_make_app(
+	SOURCES     ${CMAKE_CURRENT_LIST_DIR}/src/PickingByColorApp.cpp
+	CINDER_PATH ${CINDER_PATH}
 )
