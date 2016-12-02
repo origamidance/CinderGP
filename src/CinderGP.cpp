@@ -163,6 +163,8 @@ class GeometryApp : public App {
   gl::BatchRef mWireCube;
   AxisAlignedBox mObjectBounds;  //! The object space bounding box of the mesh.
   mat4 mTransform;  //! Transformations (translate, rotate, scale) of the mesh.
+  vec3 modelPos;
+  ivec2 testPos;
 
   // #if ! defined( CINDER_GL_ES )
   // 	params::InterfaceGlRef	mParams;
@@ -398,6 +400,8 @@ void GeometryApp::draw() {
   gl::disableDepthRead();
   // gl::viewport(0, 0, w, h);
   drawUI();
+  gl::ScopedColor color(Color(1, 0, 0));
+  gl::drawSphere(modelPos, 0.1);
 }
 
 void GeometryApp::mouseMove(MouseEvent event) {
@@ -1046,7 +1050,6 @@ void GeometryApp::drawUI() {
     }
     ui::SameLine();
     ui::Text("Background Color(click to edit)");
-
     static ImVec4 pColor =
         ImColor(mPrimitiveColor.r, mPrimitiveColor.g, mPrimitiveColor.b, 1.0);
     ui::ColorButton(pColor);
@@ -1078,6 +1081,8 @@ void GeometryApp::drawUI() {
     if (ui::Button("testNfd")) {
       testNfd();
     }
+
+    ui::InputInt2("test Pos", (int*)&testPos);
     if (ui::Button("test ray")) {
       testRay();
     }
@@ -1139,18 +1144,9 @@ void GeometryApp::testNfd() {
 }
 
 void GeometryApp::testRay() {
-  cout << "test ray!"
-       << "\n";
-  igl::Hit hit;
-  Eigen::RowVector3f eyePos(mCamera.getEyePoint().x, mCamera.getEyePoint().y,
-                            mCamera.getEyePoint().z);
-  Eigen::RowVector3f eyeDir(-eyePos.normalized());
-  // if (triMesh.getAABBTree().intersect_ray(triMesh.getV(), triMesh.getF(),
-  //                                         eyePos, eyeDir, hit)) {
-  //   cout << "gotcha!"
-  //        << "\n";
-  // };
-  cout << triMesh.getAABBTree().subtree_size() << "\n";
+  // modelPos = gl::windowToObjectCoord(vec2(testPos), 1);
+  modelPos = gl::windowToObjectCoord(gl::getModelView(), vec2(testPos));
+  cout << "model pos=" << modelPos << "\n";
 }
 
 bool GeometryApp::performPicking(vec3* pickedPoint, vec3* pickedNormal) {

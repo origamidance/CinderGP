@@ -34,11 +34,16 @@ ci_make_app(
 
 
 project( BasicApp )
-
+include_directories(${CMAKE_CURRENT_LIST_DIR}/Cinder-ImGui/include)
+include_directories(${CMAKE_CURRENT_LIST_DIR}/Cinder-ImGui/lib/imgui)
 ci_make_app(
 	SOURCES     ${CMAKE_CURRENT_LIST_DIR}/src/BasicApp.cpp
+	${CMAKE_CURRENT_LIST_DIR}/Cinder-ImGui/src/CinderImGui.cpp
+	${CMAKE_CURRENT_LIST_DIR}/Cinder-ImGui/lib/imgui/imgui.cpp
+	${CMAKE_CURRENT_LIST_DIR}/Cinder-ImGui/lib/imgui/imgui_draw.cpp
+	${CMAKE_CURRENT_LIST_DIR}/Cinder-ImGui/lib/imgui/imgui_demo.cpp
 	CINDER_PATH ${CINDER_PATH}
-	BLOCKS      Cinder-ImGui
+	# BLOCKS      Cinder-ImGui
 )
 
 project( testApp )
