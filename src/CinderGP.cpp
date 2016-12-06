@@ -260,7 +260,7 @@ void GeometryApp::update() {
   // mTransform = mat4(1.0f);
   // mTransform *=
   //     rotate(sin((float)getElapsedSeconds() * 3.0f) * 0.08f, vec3(1, 0, 0));
-  // mTransform *= rotate((float)getElapsedSeconds() * 0.1f, vec3(0, 1, 0));
+  mTransform *= rotate((float)getElapsedSeconds() * 0.1f, vec3(0, 1, 0));
   // mTransform *=
   //     rotate(sin((float)getElapsedSeconds() * 4.3f) * 0.09f, vec3(0, 0, 1));
 
@@ -1144,8 +1144,32 @@ void GeometryApp::testNfd() {
 }
 
 void GeometryApp::testRay() {
-  // modelPos = gl::windowToObjectCoord(vec2(testPos), 1);
-  modelPos = gl::windowToObjectCoord(gl::getModelView(), vec2(testPos));
+  modelPos =
+      gl::windowToObjectCoord(mTransform * gl::getModelMatrix(), vec2(testPos));
+  // float z = 0;
+  // vec2 offset = gl::getViewport().first;
+  // vec2 size = gl::getViewport().second;
+  // vec4 viewport = vec4(offset.x, offset.y, size.x, size.y);
+  // mat4 viewProjectionMatrix = gl::getProjectionMatrix() *
+  // gl::getViewMatrix();
+  // vec3 nearPlane = glm::unProject(vec3(testPos, 0), gl::getModelMatrix(),
+  //                                 viewProjectionMatrix, viewport);
+  // vec3 farPlane = glm::unProject(vec3(testPos, 1), gl::getModelMatrix(),
+  //                                viewProjectionMatrix, viewport);
+
+  // // Calculate world position.
+  // modelPos = ci::lerp(nearPlane, farPlane,
+  //                     (z - nearPlane.z) / (farPlane.z - nearPlane.z));
+  // vec3 modelPos0 =
+  //     glm::unProject(vec3(testPos, 0), gl::getModelMatrix(),
+  //                    gl::getProjectionMatrix() * gl::getViewMatrix(),
+  //                    viewport);
+  // vec3 modelPos1 =
+  //   glm::unProject(vec3(testPos, 1), gl::getModelMatrix(),
+  //                  gl::getProjectionMatrix() * gl::getViewMatrix(),
+  //                  viewport);
+  // // gl::windowToObjectCoord(glm::inverse(gl::getViewMatrix()),
+  // vec2(testPos));
   cout << "model pos=" << modelPos << "\n";
 }
 
