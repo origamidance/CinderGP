@@ -78,6 +78,7 @@ class GeometryApp : public App {
   void testGraph();
   void testNfd();
   void testRay();
+  void testProj();
   bool performPicking(vec3* pickedPoint, vec3* pickedNormal);
   void drawCube(const AxisAlignedBox& bounds, const Color& color);
 
@@ -164,7 +165,7 @@ class GeometryApp : public App {
   AxisAlignedBox mObjectBounds;  //! The object space bounding box of the mesh.
   mat4 mTransform;  //! Transformations (translate, rotate, scale) of the mesh.
   vec3 modelPos;
-  ivec2 testPos;
+  vec3 testPos;
 
   // #if ! defined( CINDER_GL_ES )
   // 	params::InterfaceGlRef	mParams;
@@ -257,12 +258,12 @@ void GeometryApp::setup() {
 void GeometryApp::update() {
   // Animate the mesh
 
-  // mTransform = mat4(1.0f);
-  // mTransform *=
-  //     rotate(sin((float)getElapsedSeconds() * 3.0f) * 0.08f, vec3(1, 0, 0));
+  mTransform = mat4(1.0f);
+  mTransform *=
+      rotate(sin((float)getElapsedSeconds() * 3.0f) * 0.08f, vec3(1, 0, 0));
   mTransform *= rotate((float)getElapsedSeconds() * 0.1f, vec3(0, 1, 0));
-  // mTransform *=
-  //     rotate(sin((float)getElapsedSeconds() * 4.3f) * 0.09f, vec3(0, 0, 1));
+  mTransform *=
+      rotate(sin((float)getElapsedSeconds() * 4.3f) * 0.09f, vec3(0, 0, 1));
 
   // If another primitive or quality was selected, reset the subdivision and
   // recreate the primitive.
@@ -1082,7 +1083,8 @@ void GeometryApp::drawUI() {
       testNfd();
     }
 
-    ui::InputInt2("test Pos", (int*)&testPos);
+    // ui::InputInt3("test Pos", (int*)&testPos);
+    ui::InputFloat3("testPos", (float*)&testPos);
     if (ui::Button("test ray")) {
       testRay();
     }
@@ -1110,6 +1112,7 @@ void GeometryApp::drawUI() {
              viewMat(1, 0), viewMat(1, 1), viewMat(1, 2), viewMat(1, 3),
              viewMat(2, 0), viewMat(2, 1), viewMat(2, 2), viewMat(2, 3),
              viewMat(3, 0), viewMat(3, 1), viewMat(3, 2), viewMat(3, 3));
+    ui::Text("FoV=%f", mCamera.getFov());
   }
 }
 
@@ -1144,8 +1147,17 @@ void GeometryApp::testNfd() {
 }
 
 void GeometryApp::testRay() {
-  modelPos =
-      gl::windowToObjectCoord(mTransform * gl::getModelMatrix(), vec2(testPos));
+  modelPos = vec3(testPos);
+  auto pos4 = vec4(modelPos, 0);
+  pos4 = glm::inverse(gl::getProjectionMatrix() * gl::getViewMatrix()) * pos4;
+  // pos4 = glm::inverse(gl::getViewMatrix()) * pos4;
+  // modelPos = vec3(pos4.x, pos4.y, pos4.z);
+  modelPos = vec3(pos4);
+
+  // modelPos =
+  // gl::windowToObjectCoord(mTransform * gl::getViewMatrix(),
+  // vec2(testPos));
+  // gl::windowToObjectCoord(mTransform, vec2(testPos));
   // float z = 0;
   // vec2 offset = gl::getViewport().first;
   // vec2 size = gl::getViewport().second;
@@ -1173,6 +1185,13 @@ void GeometryApp::testRay() {
   cout << "model pos=" << modelPos << "\n";
 }
 
+void GeometryApp::testProj() {
+  auto pos4 = vec4(testPos, 0);
+  pos4 = glm::inverse(gl::getProjectionMatrix() * gl::getViewMatrix()) * pos4;
+  // pos4 = glm::inverse(gl::getViewMatrix()) * pos4;
+  // modelPos = vec3(pos4.x, pos4.y, pos4.z);
+  modelPos = vec3(pos4);
+}
 bool GeometryApp::performPicking(vec3* pickedPoint, vec3* pickedNormal) {
   // Generate a ray from the camera into our world. Note that we have to
   // flip the vertical coordinate.
