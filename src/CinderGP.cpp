@@ -379,6 +379,7 @@ void GeometryApp::draw() {
       } else {
         gl::ScopedFaceCulling cullScope(mEnableFaceFulling, GL_BACK);
         gl::ScopedColor colorScope(mPrimitiveColor);
+        gl::translate(modelTranslate);
         mPrimitiveLambert->draw();
       }
     }
