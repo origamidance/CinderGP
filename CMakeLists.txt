@@ -24,6 +24,7 @@ include_directories("/usr/include/eigen3")
 include_directories("/usr/include/eigen3/unsupported")
 
 set(CI_APP_SOURCES ${CMAKE_CURRENT_LIST_DIR}/src/CinderGP.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/src/ImGuizmo/ImGuizmo.cpp
 )
 ci_make_app(
 	SOURCES     ${CI_APP_SOURCES}

@@ -25,6 +25,7 @@
 #include <igl/Hit.h>
 #include "Grpah/ngraph.hpp"
 #include "nfd.h"
+#include "ImGuizmo/ImGuizmo.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -81,6 +82,7 @@ class GeometryApp : public App {
   void testProj();
   bool performPicking(vec3* pickedPoint, vec3* pickedNormal);
   void drawCube(const AxisAlignedBox& bounds, const Color& color);
+  void Gizmo(const float* modelview_matrix, const float* projection_matrix);
 
  private:
   void createGrid();
@@ -117,9 +119,11 @@ class GeometryApp : public App {
   bool mRecenterCamera;
   vec3 mCameraTarget, mCameraLerpTarget, mCameraViewDirection;
   double mLastMouseDownTime;
-  Eigen::Matrix4f modelMat;
-  Eigen::Matrix4f projMat;
-  Eigen::Matrix4f viewMat;
+  mat4 modelMat = mat4();
+  vec3 modelTranslate;
+  // Eigen::Matrix4f modelMat;
+  // Eigen::Matrix4f projMat;
+  // Eigen::Matrix4f viewMat;
   ivec2 mMousePos;
 
   gl::VertBatchRef mGrid;
@@ -166,6 +170,13 @@ class GeometryApp : public App {
   mat4 mTransform;  //! Transformations (translate, rotate, scale) of the mesh.
   vec3 modelPos;
   vec3 testPos;
+
+  // float modelview_matrix[16] = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0,
+  // 1};
+  // float projection_matrix[16] = {1, 0, 0, 0, 0, 1, 0, 0,
+  //                                0, 0, 1, 0, 0, 0, 0, 1};
+  // float gGizmoMatrix[16] = {1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1};
+  float gGizmoMatrix[16] = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1};
 
   // #if ! defined( CINDER_GL_ES )
   // 	params::InterfaceGlRef	mParams;
@@ -287,9 +298,12 @@ void GeometryApp::update() {
   // mCamera.setWorldUp(mCamUp);
   // const float* glmMat = glm::value_ptr(gl::getModelView());
   // Eigen::Matrix4f eigenMat(glm::value_ptr(gl::getModelView()));
-  modelMat = Eigen::Matrix4f(glm::value_ptr(gl::getModelMatrix()));
-  projMat = Eigen::Matrix4f(glm::value_ptr(gl::getProjectionMatrix()));
-  viewMat = Eigen::Matrix4f(glm::value_ptr(gl::getViewMatrix()));
+  // modelMat = Eigen::Matrix4f(glm::value_ptr(gl::getModelMatrix()));
+  // projMat = Eigen::Matrix4f(glm::value_ptr(gl::getProjectionMatrix()));
+  // viewMat = Eigen::Matrix4f(glm::value_ptr(gl::getViewMatrix()));
+
+  // modelview_matrix = float(glm::value_ptr(gl::getModelView()));
+  // projection_matrix = float(glm::value_ptr(gl::getProjectionMatrix()));
 }
 
 void GeometryApp::draw() {
@@ -312,7 +326,7 @@ void GeometryApp::draw() {
 
     // Rotate it slowly around the y-axis.
     gl::ScopedModelMatrix matScope;
-    gl::multModelMatrix(mTransform);
+    // gl::multModelMatrix(mTransform);
     // gl::rotate( float( getElapsedSeconds() / 5 ), 0, 1, 0 );
 
     // Draw the normals.
@@ -369,16 +383,16 @@ void GeometryApp::draw() {
       }
     }
 
-    // Perform 3D picking now, so we can draw the result as a vector.
-    vec3 pickedPoint, pickedNormal;
-    if (performPicking(&pickedPoint, &pickedNormal)) {
-      gl::ScopedColor color(Color(0, 1, 0));
+    // // Perform 3D picking now, so we can draw the result as a vector.
+    // vec3 pickedPoint, pickedNormal;
+    // if (performPicking(&pickedPoint, &pickedNormal)) {
+    //   gl::ScopedColor color(Color(0, 1, 0));
 
-      // Draw an arrow to the picked point along its normal.
-      gl::ScopedGlslProg shader(
-          gl::getStockShader(gl::ShaderDef().color().lambert()));
-      gl::drawVector(pickedPoint + pickedNormal, pickedPoint);
-    }
+    //   // Draw an arrow to the picked point along its normal.
+    //   gl::ScopedGlslProg shader(
+    //       gl::getStockShader(gl::ShaderDef().color().lambert()));
+    //   gl::drawVector(pickedPoint + pickedNormal, pickedPoint);
+    // }
   }
 
   //
@@ -401,8 +415,8 @@ void GeometryApp::draw() {
   gl::disableDepthRead();
   // gl::viewport(0, 0, w, h);
   drawUI();
-  gl::ScopedColor color(Color(1, 0, 0));
-  gl::drawSphere(modelPos, 0.1);
+  // gl::ScopedColor color(Color(1, 0, 0));
+  // gl::drawSphere(modelPos, 0.1);
 }
 
 void GeometryApp::mouseMove(MouseEvent event) {
@@ -426,8 +440,9 @@ void GeometryApp::mouseDown(MouseEvent event) {
 }
 
 void GeometryApp::mouseDrag(MouseEvent event) {
-  mouseMove(event);
-  mCamUi.mouseDrag(event);
+  if (!ImGuizmo::IsUsing()) {
+    mCamUi.mouseDrag(event);
+  }
 }
 
 void GeometryApp::resize() {
@@ -810,10 +825,12 @@ void GeometryApp::createGeometry() {
       mPrimitiveWire = gl::Batch::create(
           triMesh, gl::getStockShader(gl::ShaderDef().color()));
       if (mPhongShader) {
-        mPrimitive = gl::Batch::create(triMesh, mPhongShader);
+        mPrimitive = gl::Batch::create(triMesh >> geom::Transform(modelMat),
+                                       mPhongShader);
       }
       if (mLambertShader) {
-        mPrimitiveLambert = gl::Batch::create(triMesh, mLambertShader);
+        mPrimitiveLambert = gl::Batch::create(
+            triMesh >> geom::Translate(modelTranslate), mLambertShader);
       }
       if (mWireframeShader) {
         mPrimitiveWireframe = gl::Batch::create(triMesh, mWireframeShader);
@@ -925,6 +942,13 @@ void GeometryApp::initUI() {
  * @return void
  */
 void GeometryApp::drawUI() {
+  ImGuizmo::BeginFrame();
+  ImGuizmo::Enable(true);
+  Gizmo(glm::value_ptr(gl::getModelView()),
+        glm::value_ptr(gl::getProjectionMatrix()));
+  // Gizmo(modelview_matrix, projection_matrix);
+  // ImGuizmo::DrawCube(&viewMat.data()[0], &projMat.data()[0],
+  //                    &modelMat.data()[0]);
   // The view options
   ui::ShowTestWindow();
   {
@@ -1092,27 +1116,31 @@ void GeometryApp::drawUI() {
     ui::Text("Mouse pos=%d,%d", mMousePos.x, mMousePos.y);
     ui::Text("EYE pos=%f,%f,%f", mCamera.getEyePoint().x,
              mCamera.getEyePoint().y, mCamera.getEyePoint().z);
-    vec3 mCamUp, mCamRight;
-    mCamera.getBillboardVectors(&mCamUp, &mCamRight);
-    ui::Text("up dir=%f,%f,%f", mCamUp.x, mCamUp.y, mCamUp.z);
-    ui::Text("right dir=%f,%f,%f", mCamRight.x, mCamRight.y, mCamRight.z);
-    ui::Text("model matrix=%f,%f,%f,%f\n%f,%f,%f,%f\n%f,%f,%f,%f\n%f,%f,%f,%f",
-             modelMat(0, 0), modelMat(0, 1), modelMat(0, 2), modelMat(0, 3),
-             modelMat(1, 0), modelMat(1, 1), modelMat(1, 2), modelMat(1, 3),
-             modelMat(2, 0), modelMat(2, 1), modelMat(2, 2), modelMat(2, 3),
-             modelMat(3, 0), modelMat(3, 1), modelMat(3, 2), modelMat(3, 3));
-    ui::Text(
-        "projection matrix=%f,%f,%f,%f\n%f,%f,%f,%f\n%f,%f,%f,%f\n%f,%f,%f,%f",
-        projMat(0, 0), projMat(0, 1), projMat(0, 2), projMat(0, 3),
-        projMat(1, 0), projMat(1, 1), projMat(1, 2), projMat(1, 3),
-        projMat(2, 0), projMat(2, 1), projMat(2, 2), projMat(2, 3),
-        projMat(3, 0), projMat(3, 1), projMat(3, 2), projMat(3, 3));
-    ui::Text("view matrix=%f,%f,%f,%f\n%f,%f,%f,%f\n%f,%f,%f,%f\n%f,%f,%f,%f",
-             viewMat(0, 0), viewMat(0, 1), viewMat(0, 2), viewMat(0, 3),
-             viewMat(1, 0), viewMat(1, 1), viewMat(1, 2), viewMat(1, 3),
-             viewMat(2, 0), viewMat(2, 1), viewMat(2, 2), viewMat(2, 3),
-             viewMat(3, 0), viewMat(3, 1), viewMat(3, 2), viewMat(3, 3));
-    ui::Text("FoV=%f", mCamera.getFov());
+    // vec3 mCamUp, mCamRight;
+    // mCamera.getBillboardVectors(&mCamUp, &mCamRight);
+    // ui::Text("up dir=%f,%f,%f", mCamUp.x, mCamUp.y, mCamUp.z);
+    // ui::Text("right dir=%f,%f,%f", mCamRight.x, mCamRight.y, mCamRight.z);
+    // ui::Text("model
+    // matrix=%f,%f,%f,%f\n%f,%f,%f,%f\n%f,%f,%f,%f\n%f,%f,%f,%f",
+    //          modelMat(0, 0), modelMat(0, 1), modelMat(0, 2), modelMat(0, 3),
+    //          modelMat(1, 0), modelMat(1, 1), modelMat(1, 2), modelMat(1, 3),
+    //          modelMat(2, 0), modelMat(2, 1), modelMat(2, 2), modelMat(2, 3),
+    //          modelMat(3, 0), modelMat(3, 1), modelMat(3, 2), modelMat(3, 3));
+    // ui::Text(
+    //     "projection
+    //     matrix=%f,%f,%f,%f\n%f,%f,%f,%f\n%f,%f,%f,%f\n%f,%f,%f,%f",
+    //     projMat(0, 0), projMat(0, 1), projMat(0, 2), projMat(0, 3),
+    //     projMat(1, 0), projMat(1, 1), projMat(1, 2), projMat(1, 3),
+    //     projMat(2, 0), projMat(2, 1), projMat(2, 2), projMat(2, 3),
+    //     projMat(3, 0), projMat(3, 1), projMat(3, 2), projMat(3, 3));
+    // ui::Text("view
+    // matrix=%f,%f,%f,%f\n%f,%f,%f,%f\n%f,%f,%f,%f\n%f,%f,%f,%f",
+    //          viewMat(0, 0), viewMat(0, 1), viewMat(0, 2), viewMat(0, 3),
+    //          viewMat(1, 0), viewMat(1, 1), viewMat(1, 2), viewMat(1, 3),
+    //          viewMat(2, 0), viewMat(2, 1), viewMat(2, 2), viewMat(2, 3),
+    //          viewMat(3, 0), viewMat(3, 1), viewMat(3, 2), viewMat(3, 3));
+    // ui::Text("FoV=%f", mCamera.getFov());
+    ui::InputFloat3("model translation", glm::value_ptr(modelTranslate), 3);
   }
 }
 
@@ -1272,6 +1300,50 @@ void GeometryApp::drawCube(const AxisAlignedBox& bounds, const Color& color) {
   gl::multModelMatrix(glm::translate(bounds.getCenter()) *
                       glm::scale(bounds.getSize()));
   mWireCube->draw();
+}
+
+void GeometryApp::Gizmo(const float* modelview_matrix,
+                        const float* projection_matrix) {
+  static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::TRANSLATE);
+  static ImGuizmo::MODE mCurrentGizmoMode(ImGuizmo::LOCAL);
+
+  // Maya shortcut keys
+  if (ImGui::IsKeyPressed(90))  // w Key
+    mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
+  if (ImGui::IsKeyPressed(69))  // e Key
+    mCurrentGizmoOperation = ImGuizmo::ROTATE;
+  if (ImGui::IsKeyPressed(82))  // r Key
+    mCurrentGizmoOperation = ImGuizmo::SCALE;
+
+  if (ImGui::RadioButton("Translate",
+                         mCurrentGizmoOperation == ImGuizmo::TRANSLATE))
+    mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
+  ImGui::SameLine();
+  if (ImGui::RadioButton("Rotate", mCurrentGizmoOperation == ImGuizmo::ROTATE))
+    mCurrentGizmoOperation = ImGuizmo::ROTATE;
+  ImGui::SameLine();
+  if (ImGui::RadioButton("Scale", mCurrentGizmoOperation == ImGuizmo::SCALE))
+    mCurrentGizmoOperation = ImGuizmo::SCALE;
+
+  float matrixTranslation[3], matrixRotation[3], matrixScale[3];
+  ImGuizmo::DecomposeMatrixToComponents(
+      glm::value_ptr(modelMat), matrixTranslation, matrixRotation, matrixScale);
+  modelTranslate = glm::make_vec3(matrixTranslation);
+  ImGui::InputFloat3("Tr", matrixTranslation, 3);
+  ImGui::InputFloat3("Rt", matrixRotation, 3);
+  ImGui::InputFloat3("Sc", matrixScale, 3);
+  ImGuizmo::RecomposeMatrixFromComponents(
+      matrixTranslation, matrixRotation, matrixScale, glm::value_ptr(modelMat));
+
+  if (ImGui::RadioButton("Local", mCurrentGizmoMode == ImGuizmo::LOCAL))
+    mCurrentGizmoMode = ImGuizmo::LOCAL;
+  ImGui::SameLine();
+  if (ImGui::RadioButton("World", mCurrentGizmoMode == ImGuizmo::WORLD))
+    mCurrentGizmoMode = ImGuizmo::WORLD;
+
+  ImGuizmo::Manipulate(modelview_matrix, projection_matrix,
+                       mCurrentGizmoOperation, mCurrentGizmoMode,
+                       glm::value_ptr(modelMat));
 }
 CINDER_APP(GeometryApp,
            RendererGl(RendererGl::Options().msaa(16)),
