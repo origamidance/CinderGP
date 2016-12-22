@@ -12,4 +12,4 @@
 	url = https://github.com/origamidance/Cinder-NFD.git
 [submodule "src/ImGuizmo"]
 	path = src/ImGuizmo
-	url = https://github.com/CedricGuillemet/ImGuizmo.git
+	url = https://github.com/origamidance/ImGuizmo.git
