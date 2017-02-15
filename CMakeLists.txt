@@ -1,6 +1,9 @@
 cmake_minimum_required( VERSION 3.0 FATAL_ERROR )
 set( CMAKE_VERBOSE_MAKEFILE ON )
 
+set(USE_COTIRE OFF CACHE BOOL "")
+message("++ USE_COTIRE: " ${USE_COTIRE})
+
 find_program(CCACHE_FOUND ccache)
 if(CCACHE_FOUND)
   message(STATUS "find ccache")
@@ -9,6 +12,12 @@ if(CCACHE_FOUND)
 endif(CCACHE_FOUND)
 
 project( CinderGP )
+
+if (USE_COTIRE)
+include(cotire)
+# set(COTIRE_MINIMUM_NUMBER_OF_TARGET_SOURCES 1)
+# set_directory_properties(PROPERTIES COTIRE_ADD_UNITY_BUILD FALSE)
+endif()
 
 get_filename_component( CINDER_PATH "../Cinder/" ABSOLUTE )
 
@@ -26,6 +35,7 @@ include_directories("/usr/include/eigen3/unsupported")
 set(CI_APP_SOURCES ${CMAKE_CURRENT_LIST_DIR}/src/CinderGP.cpp
   ${CMAKE_CURRENT_LIST_DIR}/src/ImGuizmo/ImGuizmo.cpp
 )
+
 ci_make_app(
 	SOURCES     ${CI_APP_SOURCES}
 	CINDER_PATH ${CINDER_PATH}
@@ -33,31 +43,35 @@ ci_make_app(
   # LIBRARIES   nfd ${GTK3_LIBRARIES}
 )
 
+if (USE_COTIRE)
+cotire(CinderGP)
+endif()
 
-project( BasicApp )
-include_directories(${CMAKE_CURRENT_LIST_DIR}/Cinder-ImGui/include)
-include_directories(${CMAKE_CURRENT_LIST_DIR}/Cinder-ImGui/lib/imgui)
-ci_make_app(
-	SOURCES     ${CMAKE_CURRENT_LIST_DIR}/src/BasicApp.cpp
-	${CMAKE_CURRENT_LIST_DIR}/Cinder-ImGui/src/CinderImGui.cpp
-	${CMAKE_CURRENT_LIST_DIR}/Cinder-ImGui/lib/imgui/imgui.cpp
-	${CMAKE_CURRENT_LIST_DIR}/Cinder-ImGui/lib/imgui/imgui_draw.cpp
-	${CMAKE_CURRENT_LIST_DIR}/Cinder-ImGui/lib/imgui/imgui_demo.cpp
-	CINDER_PATH ${CINDER_PATH}
-	# BLOCKS      Cinder-ImGui
-)
+# project( BasicApp )
+# include_directories(${CMAKE_CURRENT_LIST_DIR}/Cinder-ImGui/include)
+# include_directories(${CMAKE_CURRENT_LIST_DIR}/Cinder-ImGui/lib/imgui)
+# ci_make_app(
+# 	SOURCES     ${CMAKE_CURRENT_LIST_DIR}/src/BasicApp.cpp
+# 	${CMAKE_CURRENT_LIST_DIR}/Cinder-ImGui/src/CinderImGui.cpp
+# 	${CMAKE_CURRENT_LIST_DIR}/Cinder-ImGui/lib/imgui/imgui.cpp
+# 	${CMAKE_CURRENT_LIST_DIR}/Cinder-ImGui/lib/imgui/imgui_draw.cpp
+# 	${CMAKE_CURRENT_LIST_DIR}/Cinder-ImGui/lib/imgui/imgui_demo.cpp
+# 	CINDER_PATH ${CINDER_PATH}
+# 	# BLOCKS      Cinder-ImGui
+# )
 
-project( testApp )
+# project( testApp )
 
-ci_make_app(
-	SOURCES     ${CMAKE_CURRENT_LIST_DIR}/src/testApp.cpp
-	CINDER_PATH ${CINDER_PATH}
-	BLOCKS      Cinder-ImGui
-)
+# ci_make_app(
+# 	SOURCES     ${CMAKE_CURRENT_LIST_DIR}/src/testApp.cpp
+# 	CINDER_PATH ${CINDER_PATH}
+# 	BLOCKS      Cinder-ImGui
+# )
 
-project( pickApp )
+# project( pickApp )
 
-ci_make_app(
-	SOURCES     ${CMAKE_CURRENT_LIST_DIR}/src/PickingByColorApp.cpp
-	CINDER_PATH ${CINDER_PATH}
-)
+# ci_make_app(
+# 	SOURCES     ${CMAKE_CURRENT_LIST_DIR}/src/PickingByColorApp.cpp
+# 	CINDER_PATH ${CINDER_PATH}
+# )
+

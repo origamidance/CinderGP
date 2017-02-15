@@ -257,7 +257,7 @@ void GeometryApp::setup() {
   // Create a parameter window, so we can toggle stuff.
   // createParams();
   // triMesh = TriMesh::create(geom::Teapot().subdivisions(6));
-  auto colorShader = gl::getStockShader(gl::ShaderDef().color());
+  auto& colorShader = gl::getStockShader(gl::ShaderDef().color());
   mWireCube = gl::Batch::create(geom::WireCube(), colorShader);
 
   initUI();
@@ -288,11 +288,13 @@ void GeometryApp::update() {
   // After creating a new primitive, gradually move the camera to get a good
   // view.
   if (mRecenterCamera) {
-    float distance = glm::distance(mCamera.getEyePoint(), mCameraLerpTarget);
-    vec3 eye =
+//    float distance = glm::distance(mCamera.getEyePoint(), mCameraLerpTarget);
+    float distance =glm::distance(mCamera.getEyePoint(),mCameraLerpTarget);
         mCameraLerpTarget - lerp(distance, 5.0f, 0.25f) * mCameraViewDirection;
-    mCameraTarget = lerp(mCameraTarget, mCameraLerpTarget, 0.25f);
-    mCamera.lookAt(eye, mCameraTarget);
+        vec3 eye =
+          mCameraLerpTarget - lerp(distance, 5.0f, 0.25f) * mCameraViewDirection;
+        mCameraTarget = lerp(mCameraTarget, mCameraLerpTarget, 0.25f);
+        mCamera.lookAt(eye, mCameraTarget);
   }
   // mCamera.getBillboardVectors(&mCamRight, &mCamUp);
   // mCamera.setWorldUp(mCamUp);
@@ -1113,6 +1115,7 @@ void GeometryApp::drawUI() {
     if (ui::Button("test ray")) {
       testRay();
     }
+    ui::Text("test");
     ui::Text("fps=%f", getAverageFps());
     ui::Text("Mouse pos=%d,%d", mMousePos.x, mMousePos.y);
     ui::Text("EYE pos=%f,%f,%f", mCamera.getEyePoint().x,
