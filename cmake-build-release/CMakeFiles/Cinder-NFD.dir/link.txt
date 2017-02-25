@@ -1,2 +1,0 @@
-ccache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar qc libCinder-NFD.a  CMakeFiles/Cinder-NFD.dir/Cinder-NFD/src/nativefiledialog/src/nfd_common.c.o CMakeFiles/Cinder-NFD.dir/Cinder-NFD/src/nativefiledialog/src/nfd_cocoa.m.o
-ccache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib libCinder-NFD.a

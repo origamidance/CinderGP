@@ -48,3 +48,7 @@ GTAGS
 # idea config
 .idea//
 .idea/*
+
+# Clion compile files
+cmake-build-*//
+cmake-build-*/
