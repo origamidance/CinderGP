@@ -68,6 +68,7 @@ class GeometryApp : public App {
 
   void mouseMove(MouseEvent event) override;
   void mouseDown(MouseEvent event) override;
+  void mouseUp(MouseEvent event) override;
   void mouseDrag(MouseEvent event) override;
   void keyDown(KeyEvent event) override;
 
@@ -249,7 +250,8 @@ void GeometryApp::setup() {
   createWireframeShader();
 
   triMesh =
-      IglMesh("/home/origamidance/dependencies/libigl/tutorial/shared/cow.off");
+      IglMesh("/Users/ranzhang/Playground/CinderGP/Cinder-LibIgl/lib/libigl/tutorial/shared/cow.off");
+//  IglMesh("/home/origamidance/dependencies/libigl/tutorial/shared/cow.off");
   // Create the meshes.
   createGrid();
   createGeometry();
@@ -309,13 +311,9 @@ void GeometryApp::update() {
 }
 
 void GeometryApp::draw() {
-  // int w = getWindowWidth();
-  // int h = getWindowHeight();
-  // gl::viewport(0, 0, w / 2, h / 2);
   // Prepare for drawing.
   gl::clear(mBackGroundColor);
   gl::setMatrices(mCamera);
-  // cout<<"up direction: "<<mCamera.getWorldUp()<<"\n";
   // Enable the depth buffer.
   gl::enableDepthRead();
   gl::enableDepthWrite();
@@ -331,6 +329,7 @@ void GeometryApp::draw() {
     // gl::multModelMatrix(mTransform);
     // gl::rotate( float( getElapsedSeconds() / 5 ), 0, 1, 0 );
 
+    gl::setModelMatrix(modelMat);
     // Draw the normals.
     if (mShowNormals && mPrimitiveNormalLines) {
       gl::ScopedColor colorScope(Color(1, 1, 0));
@@ -381,7 +380,8 @@ void GeometryApp::draw() {
       } else {
         gl::ScopedFaceCulling cullScope(mEnableFaceFulling, GL_BACK);
         gl::ScopedColor colorScope(mPrimitiveColor);
-        gl::translate(modelTranslate);
+//        gl::translate(modelTranslate);
+//        gl::setModelMatrix(modelMat);
         mPrimitiveLambert->draw();
       }
     }
@@ -442,8 +442,13 @@ void GeometryApp::mouseDown(MouseEvent event) {
   mLastMouseDownTime = getElapsedSeconds();
 }
 
+void GeometryApp::mouseUp(MouseEvent event) {
+  ImGuizmo::Enable(true);
+}
+
 void GeometryApp::mouseDrag(MouseEvent event) {
   if (!ImGuizmo::IsUsing()) {
+    ImGuizmo::Enable(false);
     mCamUi.mouseDrag(event);
   }
 }
@@ -946,7 +951,7 @@ void GeometryApp::initUI() {
  */
 void GeometryApp::drawUI() {
   ImGuizmo::BeginFrame();
-  ImGuizmo::Enable(true);
+//  ImGuizmo::Enable(true);
   Gizmo(glm::value_ptr(gl::getModelView()),
         glm::value_ptr(gl::getProjectionMatrix()));
   // Gizmo(modelview_matrix, projection_matrix);

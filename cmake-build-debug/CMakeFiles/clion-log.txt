@@ -1,0 +1,8 @@
+"/Users/ranzhang/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-0/163.13906.4/CLion.app/Contents/bin/cmake/bin/cmake" -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /Users/ranzhang/Playground/CinderGP
+++ USE_COTIRE: OFF
+-- find ccache
+CINDER PATH= /Users/ranzhang/Playground/Cinder
+CINDER PATH= /Users/ranzhang/Playground/Cinder
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /Users/ranzhang/Playground/CinderGP/cmake-build-debug

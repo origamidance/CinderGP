@@ -1,4 +1,4 @@
-cmake_minimum_required( VERSION 3.0 FATAL_ERROR )
+cmake_minimum_required( VERSION 3.3 FATAL_ERROR )
 set( CMAKE_VERBOSE_MAKEFILE ON )
 
 set(USE_COTIRE OFF CACHE BOOL "")
@@ -25,12 +25,15 @@ include( "${CINDER_PATH}/proj/cmake/modules/cinderMakeApp.cmake" )
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/bin)
 
+if(UNIX AND NOT APPLE)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GTK3 REQUIRED gtk+-3.0)
-
-# include_directories("/home/origamidance/dependencies/libigl/include")
 include_directories("/usr/include/eigen3")
 include_directories("/usr/include/eigen3/unsupported")
+elseif(APPLE)
+include_directories("/usr/local/Cellar/eigen/3.3.2/include/eigen3")
+include_directories("/usr/local/Cellar/eigen/3.3.2/include/eigen3/unsupported")
+endif()
 
 set(CI_APP_SOURCES ${CMAKE_CURRENT_LIST_DIR}/src/CinderGP.cpp
   ${CMAKE_CURRENT_LIST_DIR}/src/ImGuizmo/ImGuizmo.cpp
