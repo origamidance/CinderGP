@@ -250,8 +250,8 @@ void GeometryApp::setup() {
   createWireframeShader();
 
   triMesh =
-      IglMesh("/Users/ranzhang/Playground/CinderGP/Cinder-LibIgl/lib/libigl/tutorial/shared/cow.off");
-//  IglMesh("/home/origamidance/dependencies/libigl/tutorial/shared/cow.off");
+//      IglMesh("/Users/ranzhang/Playground/CinderGP/Cinder-LibIgl/lib/libigl/tutorial/shared/cow.off");
+      IglMesh("/home/origamidance/dependencies/libigl/tutorial/shared/cow.off");
   // Create the meshes.
   createGrid();
   createGeometry();
@@ -291,7 +291,7 @@ void GeometryApp::update() {
   // view.
   if (mRecenterCamera) {
 //    float distance = glm::distance(mCamera.getEyePoint(), mCameraLerpTarget);
-    float distance =glm::distance(mCamera.getEyePoint(),mCameraLerpTarget);
+    auto distance = glm::distance(mCamera.getEyePoint(), mCameraLerpTarget);
         mCameraLerpTarget - lerp(distance, 5.0f, 0.25f) * mCameraViewDirection;
         vec3 eye =
           mCameraLerpTarget - lerp(distance, 5.0f, 0.25f) * mCameraViewDirection;
@@ -444,6 +444,7 @@ void GeometryApp::mouseDown(MouseEvent event) {
 
 void GeometryApp::mouseUp(MouseEvent event) {
   ImGuizmo::Enable(true);
+
 }
 
 void GeometryApp::mouseDrag(MouseEvent event) {
