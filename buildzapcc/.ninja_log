@@ -1,0 +1,9 @@
+# ninja log v5
+1	650	0	CMakeFiles/Cinder-ImGui.dir/Cinder-ImGui/lib/imgui/imgui_demo.cpp.o	ff84a31e6006610a
+0	1576	0	CMakeFiles/Cinder-ImGui.dir/Cinder-ImGui/lib/imgui/imgui_draw.cpp.o	75804228161b2930
+0	3048	0	CMakeFiles/Cinder-ImGui.dir/Cinder-ImGui/lib/imgui/imgui.cpp.o	5266209a0a64e0b4
+0	3310	0	CMakeFiles/Cinder-ImGui.dir/Cinder-ImGui/src/CinderImGui.cpp.o	fb642813d1bd98e0
+1	8084	0	CMakeFiles/Cinder-LibIgl.dir/Cinder-LibIgl/src/CinderLibIgl.cpp.o	1e959624602c7461
+3	83	0	CMakeFiles/Cinder-NFD.dir/Cinder-NFD/src/nativefiledialog/src/nfd_common.cpp.o	62fd91142b0e2537
+2	3049	0	CMakeFiles/Cinder-ImGui.dir/Cinder-ImGui/src/CinderImGui.cpp.o	fb642813d1bd98e0
+3	7913	0	CMakeFiles/Cinder-LibIgl.dir/Cinder-LibIgl/src/CinderLibIgl.cpp.o	1e959624602c7461

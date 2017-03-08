@@ -1,0 +1,6 @@
+/home/origamidance/Playground/CinderGP/buildzapcc/CMakeFiles/edit_cache.dir
+/home/origamidance/Playground/CinderGP/buildzapcc/CMakeFiles/rebuild_cache.dir
+/home/origamidance/Playground/CinderGP/buildzapcc/CMakeFiles/CinderGP.dir
+/home/origamidance/Playground/CinderGP/buildzapcc/CMakeFiles/Cinder-ImGui.dir
+/home/origamidance/Playground/CinderGP/buildzapcc/CMakeFiles/Cinder-LibIgl.dir
+/home/origamidance/Playground/CinderGP/buildzapcc/CMakeFiles/Cinder-NFD.dir

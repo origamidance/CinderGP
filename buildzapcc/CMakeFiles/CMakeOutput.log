@@ -1,0 +1,458 @@
+The system is: Linux - 4.9.11-1-ARCH - x86_64
+Compiling the C compiler identification source file "CMakeCCompilerId.c" succeeded.
+Compiler: /home/origamidance/dependencies/zapcc/bin/zapcc 
+Build flags: 
+Id flags: 
+
+The output was:
+0
+
+
+Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "a.out"
+
+The C compiler identification is Clang, found in "/home/origamidance/Playground/CinderGP/buildzapcc/CMakeFiles/3.7.2/CompilerIdC/a.out"
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" succeeded.
+Compiler: /home/origamidance/dependencies/zapcc/bin/zapcc++ 
+Build flags: 
+Id flags: 
+
+The output was:
+0
+
+
+Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "a.out"
+
+The CXX compiler identification is Clang, found in "/home/origamidance/Playground/CinderGP/buildzapcc/CMakeFiles/3.7.2/CompilerIdCXX/a.out"
+
+Determining if the C compiler works passed with the following output:
+Change Dir: /home/origamidance/Playground/CinderGP/buildzapcc/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/ninja" "cmTC_17635"
+[1/2] Building C object CMakeFiles/cmTC_17635.dir/testCCompiler.c.o
+[2/2] Linking C executable cmTC_17635
+
+
+Detecting C compiler ABI info compiled with the following output:
+Change Dir: /home/origamidance/Playground/CinderGP/buildzapcc/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/ninja" "cmTC_d0f37"
+[1/2] Building C object CMakeFiles/cmTC_d0f37.dir/CMakeCCompilerABI.c.o
+[2/2] Linking C executable cmTC_d0f37
+zapcc clang version 5.0.0 (trunk 295600) (based on LLVM 5.0.0svn) built on Feb 26 2017 19:10:16
+Target: x86_64-unknown-linux-gnu
+Thread model: posix
+InstalledDir: /home/origamidance/dependencies/zapcc/bin
+Found candidate GCC installation: /usr/lib/gcc/x86_64-pc-linux-gnu/6.3.1
+Found candidate GCC installation: /usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1
+Selected GCC installation: /usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1
+Candidate multilib: .;@m64
+Selected multilib: .;@m64
+ "/usr/bin/ld" -export-dynamic --eh-frame-hdr -m elf_x86_64 -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_d0f37 /usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1/../../../../lib64/crt1.o /usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1/../../../../lib64/crti.o /usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1/crtbegin.o -L/usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1 -L/usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1/../../.. -L/home/origamidance/dependencies/zapcc/bin/../lib -L/lib -L/usr/lib CMakeFiles/cmTC_d0f37.dir/CMakeCCompilerABI.c.o -lgcc --as-needed -lgcc_s --no-as-needed -lc -lgcc --as-needed -lgcc_s --no-as-needed /usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1/crtend.o /usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1/../../../../lib64/crtn.o
+
+
+Parsed C implicit link information from above output:
+  link line regex: [^( *|.*[/\])(ld|([^/\]+-)?ld|collect2)[^/\]*( |$)]
+  ignore line: [Change Dir: /home/origamidance/Playground/CinderGP/buildzapcc/CMakeFiles/CMakeTmp]
+  ignore line: []
+  ignore line: [Run Build Command:"/usr/bin/ninja" "cmTC_d0f37"]
+  ignore line: [[1/2] Building C object CMakeFiles/cmTC_d0f37.dir/CMakeCCompilerABI.c.o]
+  ignore line: [[2/2] Linking C executable cmTC_d0f37]
+  ignore line: [zapcc clang version 5.0.0 (trunk 295600) (based on LLVM 5.0.0svn) built on Feb 26 2017 19:10:16]
+  ignore line: [Target: x86_64-unknown-linux-gnu]
+  ignore line: [Thread model: posix]
+  ignore line: [InstalledDir: /home/origamidance/dependencies/zapcc/bin]
+  ignore line: [Found candidate GCC installation: /usr/lib/gcc/x86_64-pc-linux-gnu/6.3.1]
+  ignore line: [Found candidate GCC installation: /usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1]
+  ignore line: [Selected GCC installation: /usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1]
+  ignore line: [Candidate multilib: .]
+  ignore line: [@m64]
+  ignore line: [Selected multilib: .]
+  ignore line: [@m64]
+  link line: [ "/usr/bin/ld" -export-dynamic --eh-frame-hdr -m elf_x86_64 -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_d0f37 /usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1/../../../../lib64/crt1.o /usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1/../../../../lib64/crti.o /usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1/crtbegin.o -L/usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1 -L/usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1/../../.. -L/home/origamidance/dependencies/zapcc/bin/../lib -L/lib -L/usr/lib CMakeFiles/cmTC_d0f37.dir/CMakeCCompilerABI.c.o -lgcc --as-needed -lgcc_s --no-as-needed -lc -lgcc --as-needed -lgcc_s --no-as-needed /usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1/crtend.o /usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1/../../../../lib64/crtn.o]
+    arg [/usr/bin/ld] ==> ignore
+    arg [-export-dynamic] ==> ignore
+    arg [--eh-frame-hdr] ==> ignore
+    arg [-m] ==> ignore
+    arg [elf_x86_64] ==> ignore
+    arg [-export-dynamic] ==> ignore
+    arg [-dynamic-linker] ==> ignore
+    arg [/lib64/ld-linux-x86-64.so.2] ==> ignore
+    arg [-o] ==> ignore
+    arg [cmTC_d0f37] ==> ignore
+    arg [/usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1/../../../../lib64/crt1.o] ==> ignore
+    arg [/usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1/../../../../lib64/crti.o] ==> ignore
+    arg [/usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1/crtbegin.o] ==> ignore
+    arg [-L/usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1] ==> dir [/usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1]
+    arg [-L/usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1/../../../../lib64] ==> dir [/usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1/../../../../lib64]
+    arg [-L/lib/../lib64] ==> dir [/lib/../lib64]
+    arg [-L/usr/lib/../lib64] ==> dir [/usr/lib/../lib64]
+    arg [-L/usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1/../../..] ==> dir [/usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1/../../..]
+    arg [-L/home/origamidance/dependencies/zapcc/bin/../lib] ==> dir [/home/origamidance/dependencies/zapcc/bin/../lib]
+    arg [-L/lib] ==> dir [/lib]
+    arg [-L/usr/lib] ==> dir [/usr/lib]
+    arg [CMakeFiles/cmTC_d0f37.dir/CMakeCCompilerABI.c.o] ==> ignore
+    arg [-lgcc] ==> lib [gcc]
+    arg [--as-needed] ==> ignore
+    arg [-lgcc_s] ==> lib [gcc_s]
+    arg [--no-as-needed] ==> ignore
+    arg [-lc] ==> lib [c]
+    arg [-lgcc] ==> lib [gcc]
+    arg [--as-needed] ==> ignore
+    arg [-lgcc_s] ==> lib [gcc_s]
+    arg [--no-as-needed] ==> ignore
+    arg [/usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1/crtend.o] ==> ignore
+    arg [/usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1/../../../../lib64/crtn.o] ==> ignore
+  remove lib [gcc]
+  remove lib [gcc_s]
+  remove lib [gcc]
+  remove lib [gcc_s]
+  collapse library dir [/usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1] ==> [/usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1]
+  collapse library dir [/usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1/../../../../lib64] ==> [/usr/lib64]
+  collapse library dir [/lib/../lib64] ==> [/lib64]
+  collapse library dir [/usr/lib/../lib64] ==> [/usr/lib64]
+  collapse library dir [/usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1/../../..] ==> [/usr/lib64]
+  collapse library dir [/home/origamidance/dependencies/zapcc/bin/../lib] ==> [/home/origamidance/dependencies/zapcc/lib]
+  collapse library dir [/lib] ==> [/lib]
+  collapse library dir [/usr/lib] ==> [/usr/lib]
+  implicit libs: [c]
+  implicit dirs: [/usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1;/usr/lib64;/lib64;/home/origamidance/dependencies/zapcc/lib;/lib;/usr/lib]
+  implicit fwks: []
+
+
+
+
+Detecting C [-std=c11] compiler features compiled with the following output:
+Change Dir: /home/origamidance/Playground/CinderGP/buildzapcc/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/ninja" "cmTC_df3a8"
+[1/2] Building C object CMakeFiles/cmTC_df3a8.dir/feature_tests.c.o
+[2/2] Linking C executable cmTC_df3a8
+
+
+    Feature record: C_FEATURE:1c_function_prototypes
+    Feature record: C_FEATURE:1c_restrict
+    Feature record: C_FEATURE:1c_static_assert
+    Feature record: C_FEATURE:1c_variadic_macros
+
+
+Detecting C [-std=c99] compiler features compiled with the following output:
+Change Dir: /home/origamidance/Playground/CinderGP/buildzapcc/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/ninja" "cmTC_543db"
+[1/2] Building C object CMakeFiles/cmTC_543db.dir/feature_tests.c.o
+[2/2] Linking C executable cmTC_543db
+
+
+    Feature record: C_FEATURE:1c_function_prototypes
+    Feature record: C_FEATURE:1c_restrict
+    Feature record: C_FEATURE:0c_static_assert
+    Feature record: C_FEATURE:1c_variadic_macros
+
+
+Detecting C [-std=c90] compiler features compiled with the following output:
+Change Dir: /home/origamidance/Playground/CinderGP/buildzapcc/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/ninja" "cmTC_b9909"
+[1/2] Building C object CMakeFiles/cmTC_b9909.dir/feature_tests.c.o
+[2/2] Linking C executable cmTC_b9909
+
+
+    Feature record: C_FEATURE:1c_function_prototypes
+    Feature record: C_FEATURE:0c_restrict
+    Feature record: C_FEATURE:0c_static_assert
+    Feature record: C_FEATURE:0c_variadic_macros
+Determining if the CXX compiler works passed with the following output:
+Change Dir: /home/origamidance/Playground/CinderGP/buildzapcc/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/ninja" "cmTC_9e3f5"
+[1/2] Building CXX object CMakeFiles/cmTC_9e3f5.dir/testCXXCompiler.cxx.o
+[2/2] Linking CXX executable cmTC_9e3f5
+
+
+Detecting CXX compiler ABI info compiled with the following output:
+Change Dir: /home/origamidance/Playground/CinderGP/buildzapcc/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/ninja" "cmTC_916d1"
+[1/2] Building CXX object CMakeFiles/cmTC_916d1.dir/CMakeCXXCompilerABI.cpp.o
+[2/2] Linking CXX executable cmTC_916d1
+zapcc clang version 5.0.0 (trunk 295600) (based on LLVM 5.0.0svn) built on Feb 26 2017 19:10:16
+Target: x86_64-unknown-linux-gnu
+Thread model: posix
+InstalledDir: /home/origamidance/dependencies/zapcc/bin
+Found candidate GCC installation: /usr/lib/gcc/x86_64-pc-linux-gnu/6.3.1
+Found candidate GCC installation: /usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1
+Selected GCC installation: /usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1
+Candidate multilib: .;@m64
+Selected multilib: .;@m64
+ "/usr/bin/ld" -export-dynamic --eh-frame-hdr -m elf_x86_64 -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_916d1 /usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1/../../../../lib64/crt1.o /usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1/../../../../lib64/crti.o /usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1/crtbegin.o -L/usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1 -L/usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1/../../.. -L/home/origamidance/dependencies/zapcc/bin/../lib -L/lib -L/usr/lib CMakeFiles/cmTC_916d1.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1/crtend.o /usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1/../../../../lib64/crtn.o
+
+
+Parsed CXX implicit link information from above output:
+  link line regex: [^( *|.*[/\])(ld|([^/\]+-)?ld|collect2)[^/\]*( |$)]
+  ignore line: [Change Dir: /home/origamidance/Playground/CinderGP/buildzapcc/CMakeFiles/CMakeTmp]
+  ignore line: []
+  ignore line: [Run Build Command:"/usr/bin/ninja" "cmTC_916d1"]
+  ignore line: [[1/2] Building CXX object CMakeFiles/cmTC_916d1.dir/CMakeCXXCompilerABI.cpp.o]
+  ignore line: [[2/2] Linking CXX executable cmTC_916d1]
+  ignore line: [zapcc clang version 5.0.0 (trunk 295600) (based on LLVM 5.0.0svn) built on Feb 26 2017 19:10:16]
+  ignore line: [Target: x86_64-unknown-linux-gnu]
+  ignore line: [Thread model: posix]
+  ignore line: [InstalledDir: /home/origamidance/dependencies/zapcc/bin]
+  ignore line: [Found candidate GCC installation: /usr/lib/gcc/x86_64-pc-linux-gnu/6.3.1]
+  ignore line: [Found candidate GCC installation: /usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1]
+  ignore line: [Selected GCC installation: /usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1]
+  ignore line: [Candidate multilib: .]
+  ignore line: [@m64]
+  ignore line: [Selected multilib: .]
+  ignore line: [@m64]
+  link line: [ "/usr/bin/ld" -export-dynamic --eh-frame-hdr -m elf_x86_64 -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_916d1 /usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1/../../../../lib64/crt1.o /usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1/../../../../lib64/crti.o /usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1/crtbegin.o -L/usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1 -L/usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1/../../.. -L/home/origamidance/dependencies/zapcc/bin/../lib -L/lib -L/usr/lib CMakeFiles/cmTC_916d1.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1/crtend.o /usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1/../../../../lib64/crtn.o]
+    arg [/usr/bin/ld] ==> ignore
+    arg [-export-dynamic] ==> ignore
+    arg [--eh-frame-hdr] ==> ignore
+    arg [-m] ==> ignore
+    arg [elf_x86_64] ==> ignore
+    arg [-export-dynamic] ==> ignore
+    arg [-dynamic-linker] ==> ignore
+    arg [/lib64/ld-linux-x86-64.so.2] ==> ignore
+    arg [-o] ==> ignore
+    arg [cmTC_916d1] ==> ignore
+    arg [/usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1/../../../../lib64/crt1.o] ==> ignore
+    arg [/usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1/../../../../lib64/crti.o] ==> ignore
+    arg [/usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1/crtbegin.o] ==> ignore
+    arg [-L/usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1] ==> dir [/usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1]
+    arg [-L/usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1/../../../../lib64] ==> dir [/usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1/../../../../lib64]
+    arg [-L/lib/../lib64] ==> dir [/lib/../lib64]
+    arg [-L/usr/lib/../lib64] ==> dir [/usr/lib/../lib64]
+    arg [-L/usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1/../../..] ==> dir [/usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1/../../..]
+    arg [-L/home/origamidance/dependencies/zapcc/bin/../lib] ==> dir [/home/origamidance/dependencies/zapcc/bin/../lib]
+    arg [-L/lib] ==> dir [/lib]
+    arg [-L/usr/lib] ==> dir [/usr/lib]
+    arg [CMakeFiles/cmTC_916d1.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
+    arg [-lstdc++] ==> lib [stdc++]
+    arg [-lm] ==> lib [m]
+    arg [-lgcc_s] ==> lib [gcc_s]
+    arg [-lgcc] ==> lib [gcc]
+    arg [-lc] ==> lib [c]
+    arg [-lgcc_s] ==> lib [gcc_s]
+    arg [-lgcc] ==> lib [gcc]
+    arg [/usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1/crtend.o] ==> ignore
+    arg [/usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1/../../../../lib64/crtn.o] ==> ignore
+  remove lib [gcc_s]
+  remove lib [gcc]
+  remove lib [gcc_s]
+  remove lib [gcc]
+  collapse library dir [/usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1] ==> [/usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1]
+  collapse library dir [/usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1/../../../../lib64] ==> [/usr/lib64]
+  collapse library dir [/lib/../lib64] ==> [/lib64]
+  collapse library dir [/usr/lib/../lib64] ==> [/usr/lib64]
+  collapse library dir [/usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1/../../..] ==> [/usr/lib64]
+  collapse library dir [/home/origamidance/dependencies/zapcc/bin/../lib] ==> [/home/origamidance/dependencies/zapcc/lib]
+  collapse library dir [/lib] ==> [/lib]
+  collapse library dir [/usr/lib] ==> [/usr/lib]
+  implicit libs: [stdc++;m;c]
+  implicit dirs: [/usr/lib64/gcc/x86_64-pc-linux-gnu/6.3.1;/usr/lib64;/lib64;/home/origamidance/dependencies/zapcc/lib;/lib;/usr/lib]
+  implicit fwks: []
+
+
+
+
+Detecting CXX [-std=c++14] compiler features compiled with the following output:
+Change Dir: /home/origamidance/Playground/CinderGP/buildzapcc/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/ninja" "cmTC_41795"
+[1/2] Building CXX object CMakeFiles/cmTC_41795.dir/feature_tests.cxx.o
+[2/2] Linking CXX executable cmTC_41795
+
+
+    Feature record: CXX_FEATURE:1cxx_aggregate_default_initializers
+    Feature record: CXX_FEATURE:1cxx_alias_templates
+    Feature record: CXX_FEATURE:1cxx_alignas
+    Feature record: CXX_FEATURE:1cxx_alignof
+    Feature record: CXX_FEATURE:1cxx_attributes
+    Feature record: CXX_FEATURE:1cxx_attribute_deprecated
+    Feature record: CXX_FEATURE:1cxx_auto_type
+    Feature record: CXX_FEATURE:1cxx_binary_literals
+    Feature record: CXX_FEATURE:1cxx_constexpr
+    Feature record: CXX_FEATURE:1cxx_contextual_conversions
+    Feature record: CXX_FEATURE:1cxx_decltype
+    Feature record: CXX_FEATURE:1cxx_decltype_auto
+    Feature record: CXX_FEATURE:1cxx_decltype_incomplete_return_types
+    Feature record: CXX_FEATURE:1cxx_default_function_template_args
+    Feature record: CXX_FEATURE:1cxx_defaulted_functions
+    Feature record: CXX_FEATURE:1cxx_defaulted_move_initializers
+    Feature record: CXX_FEATURE:1cxx_delegating_constructors
+    Feature record: CXX_FEATURE:1cxx_deleted_functions
+    Feature record: CXX_FEATURE:1cxx_digit_separators
+    Feature record: CXX_FEATURE:1cxx_enum_forward_declarations
+    Feature record: CXX_FEATURE:1cxx_explicit_conversions
+    Feature record: CXX_FEATURE:1cxx_extended_friend_declarations
+    Feature record: CXX_FEATURE:1cxx_extern_templates
+    Feature record: CXX_FEATURE:1cxx_final
+    Feature record: CXX_FEATURE:1cxx_func_identifier
+    Feature record: CXX_FEATURE:1cxx_generalized_initializers
+    Feature record: CXX_FEATURE:1cxx_generic_lambdas
+    Feature record: CXX_FEATURE:1cxx_inheriting_constructors
+    Feature record: CXX_FEATURE:1cxx_inline_namespaces
+    Feature record: CXX_FEATURE:1cxx_lambdas
+    Feature record: CXX_FEATURE:1cxx_lambda_init_captures
+    Feature record: CXX_FEATURE:1cxx_local_type_template_args
+    Feature record: CXX_FEATURE:1cxx_long_long_type
+    Feature record: CXX_FEATURE:1cxx_noexcept
+    Feature record: CXX_FEATURE:1cxx_nonstatic_member_init
+    Feature record: CXX_FEATURE:1cxx_nullptr
+    Feature record: CXX_FEATURE:1cxx_override
+    Feature record: CXX_FEATURE:1cxx_range_for
+    Feature record: CXX_FEATURE:1cxx_raw_string_literals
+    Feature record: CXX_FEATURE:1cxx_reference_qualified_functions
+    Feature record: CXX_FEATURE:1cxx_relaxed_constexpr
+    Feature record: CXX_FEATURE:1cxx_return_type_deduction
+    Feature record: CXX_FEATURE:1cxx_right_angle_brackets
+    Feature record: CXX_FEATURE:1cxx_rvalue_references
+    Feature record: CXX_FEATURE:1cxx_sizeof_member
+    Feature record: CXX_FEATURE:1cxx_static_assert
+    Feature record: CXX_FEATURE:1cxx_strong_enums
+    Feature record: CXX_FEATURE:1cxx_template_template_parameters
+    Feature record: CXX_FEATURE:1cxx_thread_local
+    Feature record: CXX_FEATURE:1cxx_trailing_return_types
+    Feature record: CXX_FEATURE:1cxx_unicode_literals
+    Feature record: CXX_FEATURE:1cxx_uniform_initialization
+    Feature record: CXX_FEATURE:1cxx_unrestricted_unions
+    Feature record: CXX_FEATURE:1cxx_user_literals
+    Feature record: CXX_FEATURE:1cxx_variable_templates
+    Feature record: CXX_FEATURE:1cxx_variadic_macros
+    Feature record: CXX_FEATURE:1cxx_variadic_templates
+
+
+Detecting CXX [-std=c++11] compiler features compiled with the following output:
+Change Dir: /home/origamidance/Playground/CinderGP/buildzapcc/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/ninja" "cmTC_ea835"
+[1/2] Building CXX object CMakeFiles/cmTC_ea835.dir/feature_tests.cxx.o
+[2/2] Linking CXX executable cmTC_ea835
+
+
+    Feature record: CXX_FEATURE:0cxx_aggregate_default_initializers
+    Feature record: CXX_FEATURE:1cxx_alias_templates
+    Feature record: CXX_FEATURE:1cxx_alignas
+    Feature record: CXX_FEATURE:1cxx_alignof
+    Feature record: CXX_FEATURE:1cxx_attributes
+    Feature record: CXX_FEATURE:0cxx_attribute_deprecated
+    Feature record: CXX_FEATURE:1cxx_auto_type
+    Feature record: CXX_FEATURE:0cxx_binary_literals
+    Feature record: CXX_FEATURE:1cxx_constexpr
+    Feature record: CXX_FEATURE:0cxx_contextual_conversions
+    Feature record: CXX_FEATURE:1cxx_decltype
+    Feature record: CXX_FEATURE:0cxx_decltype_auto
+    Feature record: CXX_FEATURE:1cxx_decltype_incomplete_return_types
+    Feature record: CXX_FEATURE:1cxx_default_function_template_args
+    Feature record: CXX_FEATURE:1cxx_defaulted_functions
+    Feature record: CXX_FEATURE:1cxx_defaulted_move_initializers
+    Feature record: CXX_FEATURE:1cxx_delegating_constructors
+    Feature record: CXX_FEATURE:1cxx_deleted_functions
+    Feature record: CXX_FEATURE:0cxx_digit_separators
+    Feature record: CXX_FEATURE:1cxx_enum_forward_declarations
+    Feature record: CXX_FEATURE:1cxx_explicit_conversions
+    Feature record: CXX_FEATURE:1cxx_extended_friend_declarations
+    Feature record: CXX_FEATURE:1cxx_extern_templates
+    Feature record: CXX_FEATURE:1cxx_final
+    Feature record: CXX_FEATURE:1cxx_func_identifier
+    Feature record: CXX_FEATURE:1cxx_generalized_initializers
+    Feature record: CXX_FEATURE:0cxx_generic_lambdas
+    Feature record: CXX_FEATURE:1cxx_inheriting_constructors
+    Feature record: CXX_FEATURE:1cxx_inline_namespaces
+    Feature record: CXX_FEATURE:1cxx_lambdas
+    Feature record: CXX_FEATURE:0cxx_lambda_init_captures
+    Feature record: CXX_FEATURE:1cxx_local_type_template_args
+    Feature record: CXX_FEATURE:1cxx_long_long_type
+    Feature record: CXX_FEATURE:1cxx_noexcept
+    Feature record: CXX_FEATURE:1cxx_nonstatic_member_init
+    Feature record: CXX_FEATURE:1cxx_nullptr
+    Feature record: CXX_FEATURE:1cxx_override
+    Feature record: CXX_FEATURE:1cxx_range_for
+    Feature record: CXX_FEATURE:1cxx_raw_string_literals
+    Feature record: CXX_FEATURE:1cxx_reference_qualified_functions
+    Feature record: CXX_FEATURE:0cxx_relaxed_constexpr
+    Feature record: CXX_FEATURE:0cxx_return_type_deduction
+    Feature record: CXX_FEATURE:1cxx_right_angle_brackets
+    Feature record: CXX_FEATURE:1cxx_rvalue_references
+    Feature record: CXX_FEATURE:1cxx_sizeof_member
+    Feature record: CXX_FEATURE:1cxx_static_assert
+    Feature record: CXX_FEATURE:1cxx_strong_enums
+    Feature record: CXX_FEATURE:1cxx_template_template_parameters
+    Feature record: CXX_FEATURE:1cxx_thread_local
+    Feature record: CXX_FEATURE:1cxx_trailing_return_types
+    Feature record: CXX_FEATURE:1cxx_unicode_literals
+    Feature record: CXX_FEATURE:1cxx_uniform_initialization
+    Feature record: CXX_FEATURE:1cxx_unrestricted_unions
+    Feature record: CXX_FEATURE:1cxx_user_literals
+    Feature record: CXX_FEATURE:0cxx_variable_templates
+    Feature record: CXX_FEATURE:1cxx_variadic_macros
+    Feature record: CXX_FEATURE:1cxx_variadic_templates
+
+
+Detecting CXX [-std=c++98] compiler features compiled with the following output:
+Change Dir: /home/origamidance/Playground/CinderGP/buildzapcc/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/ninja" "cmTC_c43b2"
+[1/2] Building CXX object CMakeFiles/cmTC_c43b2.dir/feature_tests.cxx.o
+[2/2] Linking CXX executable cmTC_c43b2
+
+
+    Feature record: CXX_FEATURE:0cxx_aggregate_default_initializers
+    Feature record: CXX_FEATURE:0cxx_alias_templates
+    Feature record: CXX_FEATURE:0cxx_alignas
+    Feature record: CXX_FEATURE:0cxx_alignof
+    Feature record: CXX_FEATURE:0cxx_attributes
+    Feature record: CXX_FEATURE:0cxx_attribute_deprecated
+    Feature record: CXX_FEATURE:0cxx_auto_type
+    Feature record: CXX_FEATURE:0cxx_binary_literals
+    Feature record: CXX_FEATURE:0cxx_constexpr
+    Feature record: CXX_FEATURE:0cxx_contextual_conversions
+    Feature record: CXX_FEATURE:0cxx_decltype
+    Feature record: CXX_FEATURE:0cxx_decltype_auto
+    Feature record: CXX_FEATURE:0cxx_decltype_incomplete_return_types
+    Feature record: CXX_FEATURE:0cxx_default_function_template_args
+    Feature record: CXX_FEATURE:0cxx_defaulted_functions
+    Feature record: CXX_FEATURE:0cxx_defaulted_move_initializers
+    Feature record: CXX_FEATURE:0cxx_delegating_constructors
+    Feature record: CXX_FEATURE:0cxx_deleted_functions
+    Feature record: CXX_FEATURE:0cxx_digit_separators
+    Feature record: CXX_FEATURE:0cxx_enum_forward_declarations
+    Feature record: CXX_FEATURE:0cxx_explicit_conversions
+    Feature record: CXX_FEATURE:0cxx_extended_friend_declarations
+    Feature record: CXX_FEATURE:0cxx_extern_templates
+    Feature record: CXX_FEATURE:0cxx_final
+    Feature record: CXX_FEATURE:0cxx_func_identifier
+    Feature record: CXX_FEATURE:0cxx_generalized_initializers
+    Feature record: CXX_FEATURE:0cxx_generic_lambdas
+    Feature record: CXX_FEATURE:0cxx_inheriting_constructors
+    Feature record: CXX_FEATURE:0cxx_inline_namespaces
+    Feature record: CXX_FEATURE:0cxx_lambdas
+    Feature record: CXX_FEATURE:0cxx_lambda_init_captures
+    Feature record: CXX_FEATURE:0cxx_local_type_template_args
+    Feature record: CXX_FEATURE:0cxx_long_long_type
+    Feature record: CXX_FEATURE:0cxx_noexcept
+    Feature record: CXX_FEATURE:0cxx_nonstatic_member_init
+    Feature record: CXX_FEATURE:0cxx_nullptr
+    Feature record: CXX_FEATURE:0cxx_override
+    Feature record: CXX_FEATURE:0cxx_range_for
+    Feature record: CXX_FEATURE:0cxx_raw_string_literals
+    Feature record: CXX_FEATURE:0cxx_reference_qualified_functions
+    Feature record: CXX_FEATURE:0cxx_relaxed_constexpr
+    Feature record: CXX_FEATURE:0cxx_return_type_deduction
+    Feature record: CXX_FEATURE:0cxx_right_angle_brackets
+    Feature record: CXX_FEATURE:0cxx_rvalue_references
+    Feature record: CXX_FEATURE:0cxx_sizeof_member
+    Feature record: CXX_FEATURE:0cxx_static_assert
+    Feature record: CXX_FEATURE:0cxx_strong_enums
+    Feature record: CXX_FEATURE:1cxx_template_template_parameters
+    Feature record: CXX_FEATURE:0cxx_thread_local
+    Feature record: CXX_FEATURE:0cxx_trailing_return_types
+    Feature record: CXX_FEATURE:0cxx_unicode_literals
+    Feature record: CXX_FEATURE:0cxx_uniform_initialization
+    Feature record: CXX_FEATURE:0cxx_unrestricted_unions
+    Feature record: CXX_FEATURE:0cxx_user_literals
+    Feature record: CXX_FEATURE:0cxx_variable_templates
+    Feature record: CXX_FEATURE:0cxx_variadic_macros
+    Feature record: CXX_FEATURE:0cxx_variadic_templates
