@@ -1,6 +1,3 @@
-// #define EIGEN_NO_DEBUG
-// #define EIGEN_NO_STATIC_ASSERT
-// #include <Eigen/Core>
 #include "CinderImGui.h"
 #include "CinderLibIgl.h"
 #include "cinder/Camera.h"
@@ -18,7 +15,6 @@
 #include "cinder/gl/VboMesh.h"
 #include "cinder/gl/gl.h"
 #include "cinder/params/Params.h"
-// #include <igl/opengl/create_mesh_vbo.h>
 #include <igl/read_triangle_mesh.h>
 #include <igl/viewer/ViewerData.h>
 #include <igl/ray_mesh_intersect.h>
@@ -27,14 +23,16 @@
 #include "nfd.h"
 #include "ImGuizmo/ImGuizmo.h"
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "IncompatibleTypes"
 using namespace ci;
 using namespace ci::app;
 using namespace std;
 
-void prepareSettings(App::Settings* settings);
+void prepareSettings(App::Settings *settings);
 
 class GeometryApp : public App {
- public:
+public:
   GeometryApp();
 
   enum Primitive {
@@ -57,43 +55,69 @@ class GeometryApp : public App {
     VBOMESH,
     PRIMITIVE_COUNT
   };
-  enum Quality { LOW, DEFAULT, HIGH };
-  enum ViewMode { PHONG, WIREFRAME, LAMBERT };
-  enum TexturingMode { NONE, PROCEDURAL, SAMPLER };
+  enum Quality {
+    LOW, DEFAULT, HIGH
+  };
+  enum ViewMode {
+    PHONG, WIREFRAME, LAMBERT
+  };
+  enum TexturingMode {
+    NONE, PROCEDURAL, SAMPLER
+  };
 
   void setup() override;
+
   void resize() override;
+
   void update() override;
+
   void draw() override;
 
   void mouseMove(MouseEvent event) override;
+
   void mouseDown(MouseEvent event) override;
+
   void mouseUp(MouseEvent event) override;
+
   void mouseDrag(MouseEvent event) override;
+
   void keyDown(KeyEvent event) override;
 
   void fileDrop(FileDropEvent event) override;
 
   void initUI();
+
   void drawUI();
 
   void testGraph();
-  void testNfd();
-  void testRay();
-  void testProj();
-  bool performPicking(vec3* pickedPoint, vec3* pickedNormal);
-  void drawCube(const AxisAlignedBox& bounds, const Color& color);
-  void Gizmo(const float* modelview_matrix, const float* projection_matrix);
 
- private:
+  void testNfd();
+
+  void testRay();
+
+  void testProj();
+
+  bool performPicking(vec3 *pickedPoint, vec3 *pickedNormal);
+
+  void drawCube(const AxisAlignedBox &bounds, const Color &color);
+
+  void Gizmo(const float *modelview_matrix, const float *projection_matrix);
+
+private:
   void createGrid();
+
   void createLambertShader();
+
   void createPhongShader();
+
   void createWireShader();
+
   void createWireframeShader();
+
   void createGeometry();
-  void loadGeomSource(const geom::Source& source,
-                      const geom::Source& sourceWire);
+
+  void loadGeomSource(const geom::Source &source,
+                      const geom::Source &sourceWire);
   // void createParams();
   // void updateParams();
 
@@ -187,7 +211,7 @@ class GeometryApp : public App {
   // #endif
 };
 
-void prepareSettings(App::Settings* settings) {
+void prepareSettings(App::Settings *settings) {
   settings->setWindowSize(1024, 768);
   settings->setHighDensityDisplayEnabled();
   settings->setMultiTouchEnabled(false);
@@ -250,8 +274,8 @@ void GeometryApp::setup() {
   createWireframeShader();
 
   triMesh =
-      IglMesh("/Users/ranzhang/Playground/CinderGP/Cinder-LibIgl/lib/libigl/tutorial/shared/cow.off");
-//  IglMesh("/home/origamidance/dependencies/libigl/tutorial/shared/cow.off");
+//      IglMesh("/Users/ranzhang/Playground/CinderGP/Cinder-LibIgl/lib/libigl/tutorial/shared/cow.off");
+      IglMesh("/home/origamidance/dependencies/libigl/tutorial/shared/cow.off");
   // Create the meshes.
   createGrid();
   createGeometry();
@@ -259,11 +283,12 @@ void GeometryApp::setup() {
   // Create a parameter window, so we can toggle stuff.
   // createParams();
   // triMesh = TriMesh::create(geom::Teapot().subdivisions(6));
-  auto& colorShader = gl::getStockShader(gl::ShaderDef().color());
+  auto &colorShader = gl::getStockShader(gl::ShaderDef().color());
   mWireCube = gl::Batch::create(geom::WireCube(), colorShader);
 
   initUI();
 }
+
 /**
  * @name update - Updates the  of type void
  * @return void
@@ -273,10 +298,10 @@ void GeometryApp::update() {
 
   mTransform = mat4(1.0f);
   mTransform *=
-      rotate(sin((float)getElapsedSeconds() * 3.0f) * 0.08f, vec3(1, 0, 0));
-  mTransform *= rotate((float)getElapsedSeconds() * 0.1f, vec3(0, 1, 0));
+      rotate(sin((float) getElapsedSeconds() * 3.0f) * 0.08f, vec3(1, 0, 0));
+  mTransform *= rotate((float) getElapsedSeconds() * 0.1f, vec3(0, 1, 0));
   mTransform *=
-      rotate(sin((float)getElapsedSeconds() * 4.3f) * 0.09f, vec3(0, 0, 1));
+      rotate(sin((float) getElapsedSeconds() * 4.3f) * 0.09f, vec3(0, 0, 1));
 
   // If another primitive or quality was selected, reset the subdivision and
   // recreate the primitive.
@@ -291,12 +316,10 @@ void GeometryApp::update() {
   // view.
   if (mRecenterCamera) {
 //    float distance = glm::distance(mCamera.getEyePoint(), mCameraLerpTarget);
-    float distance =glm::distance(mCamera.getEyePoint(),mCameraLerpTarget);
-        mCameraLerpTarget - lerp(distance, 5.0f, 0.25f) * mCameraViewDirection;
-        vec3 eye =
-          mCameraLerpTarget - lerp(distance, 5.0f, 0.25f) * mCameraViewDirection;
-        mCameraTarget = lerp(mCameraTarget, mCameraLerpTarget, 0.25f);
-        mCamera.lookAt(eye, mCameraTarget);
+    auto distance = glm::distance(mCamera.getEyePoint(), mCameraLerpTarget);
+    vec3 eye = mCameraLerpTarget - cinder::lerp(distance, 5.0f, 0.25f) * mCameraViewDirection;
+    mCameraTarget = lerp(mCameraTarget, mCameraLerpTarget, 0.25f);
+    mCamera.lookAt(eye, mCameraTarget);
   }
   // mCamera.getBillboardVectors(&mCamRight, &mCamUp);
   // mCamera.setWorldUp(mCamUp);
@@ -479,7 +502,7 @@ void GeometryApp::keyDown(KeyEvent event) {
       mShowGrid = !mShowGrid;
       break;
     case KeyEvent::KEY_q:
-      mQualitySelected = Quality((int)(mQualitySelected + 1) % 3);
+      mQualitySelected = Quality((int) (mQualitySelected + 1) % 3);
       break;
 #if !defined(CINDER_GL_ES)
     case KeyEvent::KEY_v:
@@ -487,7 +510,7 @@ void GeometryApp::keyDown(KeyEvent event) {
       //   mViewMode = SHADED;
       // else
       //   mViewMode = WIREFRAME;
-      mViewMode = ViewMode((int)(mViewMode + 1) % 3);
+      mViewMode = ViewMode((int) (mViewMode + 1) % 3);
       break;
 #endif
     case KeyEvent::KEY_w:
@@ -508,7 +531,7 @@ void GeometryApp::fileDrop(FileDropEvent event) {
     fmt.setWrap(GL_REPEAT, GL_REPEAT);
 
     mTexture = gl::Texture2d::create(loadImage(event.getFile(0)), fmt);
-  } catch (const std::exception& exc) {
+  } catch (const std::exception &exc) {
   }
 }
 
@@ -847,8 +870,8 @@ void GeometryApp::createGeometry() {
   }
 }
 
-void GeometryApp::loadGeomSource(const geom::Source& source,
-                                 const geom::Source& sourceWire) {
+void GeometryApp::loadGeomSource(const geom::Source &source,
+                                 const geom::Source &sourceWire) {
   // The purpose of the TriMesh is to capture a bounding box; without that need
   // we could just instantiate the Batch directly using primitive
   TriMesh::Format fmt =
@@ -896,7 +919,7 @@ void GeometryApp::loadGeomSource(const geom::Source& source,
 void GeometryApp::createLambertShader() {
   try {
     mLambertShader = gl::getStockShader(gl::ShaderDef().lambert().color());
-  } catch (Exception& exc) {
+  } catch (Exception &exc) {
     CI_LOG_E("error loading lambert sader:" << exc.what());
   }
 }
@@ -910,7 +933,7 @@ void GeometryApp::createPhongShader() {
     mPhongShader =
         gl::GlslProg::create(loadAsset("phong.vert"), loadAsset("phong.frag"));
 #endif
-  } catch (Exception& exc) {
+  } catch (Exception &exc) {
     CI_LOG_E("error loading phong shader: " << exc.what());
   }
 }
@@ -918,7 +941,7 @@ void GeometryApp::createPhongShader() {
 void GeometryApp::createWireShader() {
   try {
     mWireShader = gl::context()->getStockShader(gl::ShaderDef().color());
-  } catch (Exception& exc) {
+  } catch (Exception &exc) {
     CI_LOG_E("error loading wire shader: " << exc.what());
   }
 }
@@ -927,12 +950,12 @@ void GeometryApp::createWireframeShader() {
 #if !defined(CINDER_GL_ES)
   try {
     auto format = gl::GlslProg::Format()
-                      .vertex(loadAsset("wireframe.vert"))
-                      .geometry(loadAsset("wireframe.geom"))
-                      .fragment(loadAsset("wireframe.frag"));
+        .vertex(loadAsset("wireframe.vert"))
+        .geometry(loadAsset("wireframe.geom"))
+        .fragment(loadAsset("wireframe.frag"));
 
     mWireframeShader = gl::GlslProg::create(format);
-  } catch (Exception& exc) {
+  } catch (Exception &exc) {
     CI_LOG_E("error loading wireframe shader: " << exc.what());
   }
 #endif  // ! defined( CINDER_GL_ES )
@@ -945,6 +968,7 @@ void GeometryApp::createWireframeShader() {
 void GeometryApp::initUI() {
   ui::initialize();
 }
+
 /**
  * @name drawUI - draws the Imgui
  * @return void
@@ -960,14 +984,14 @@ void GeometryApp::drawUI() {
   // The view options
   ui::ShowTestWindow();
   {
-    vector<string> primitives = {"Capsule",    "Cone",
-                                 "Cube",       "Cylinder",
-                                 "Helix",      "Icosahedron",
-                                 "Icosphere",  "Sphere",
-                                 "Teapot",     "Torus",
+    vector<string> primitives = {"Capsule", "Cone",
+                                 "Cube", "Cylinder",
+                                 "Helix", "Icosahedron",
+                                 "Icosphere", "Sphere",
+                                 "Teapot", "Torus",
                                  "Torus Knot", "Plane",
-                                 "Rectangle",  "Rounded Rectangle",
-                                 "Circle",     "Ring",
+                                 "Rectangle", "Rounded Rectangle",
+                                 "Circle", "Ring",
                                  "VBOMesh"};
     vector<string> qualities = {"Low", "Default", "High"};
     // vector<string> viewModes = {"Phong", "Wireframe","Lambert"};
@@ -977,8 +1001,8 @@ void GeometryApp::drawUI() {
     ui::ScopedWindow viewOptions("View options",
                                  ImGuiWindowFlags_AlwaysAutoResize);
     static int nPrimitiveSelected = mPrimitiveSelected;
-    if (ui::Combo("Primitive", (int*)&mPrimitiveSelected, primitives)) {
-      switch ((int)mPrimitiveSelected) {
+    if (ui::Combo("Primitive", (int *) &mPrimitiveSelected, primitives)) {
+      switch ((int) mPrimitiveSelected) {
         // Capsule
         case CAPSULE:
           if (ui::DragFloat("Capsule: Radius", &mCapsuleRadius, 0.01f)) {
@@ -988,13 +1012,13 @@ void GeometryApp::drawUI() {
             createGeometry();
           };
           break;
-        // Cone
+          // Cone
         case CONE:
           if (ui::DragFloat("CONE: Ratio", &mConeRatio, 0.01f)) {
             createGeometry();
           };
           break;
-        // Helix
+          // Helix
         case HELIX:
           if (ui::DragFloat("Helix: Ratio", &mHelixRatio, 0.01f)) {
             createGeometry();
@@ -1002,38 +1026,38 @@ void GeometryApp::drawUI() {
           if (ui::DragFloat("Helix: Coils", &mHelixCoils, 0.01f)) {
             createGeometry();
           };
-          if (ui::DragInt("Helix: Twist", (int*)&mHelixTwist, 0.01f)) {
+          if (ui::DragInt("Helix: Twist", (int *) &mHelixTwist, 0.01f)) {
             createGeometry();
           };
           if (ui::DragFloat("Helix: Twist Offset", &mHelixOffset, 0.01f)) {
             createGeometry();
           };
           break;
-        // Ring
+          // Ring
         case RING:
           if (ui::DragFloat("Ring: Width", &mRingWidth, 0.01f)) {
             createGeometry();
           };
           break;
-        // Rounded Rect
+          // Rounded Rect
         case ROUNDEDRECT:
           if (ui::DragFloat("Corner Radius", &mRoundedRectRadius, 0.01f)) {
             createGeometry();
           };
           break;
-        // Torus
+          // Torus
         case TORUS:
           if (ui::DragFloat("Torus: Ratio", &mTorusRatio, 0.01f)) {
             createGeometry();
           };
-          if (ui::DragInt("Torus: Twist", (int*)&mTorusTwist, 0.01f)) {
+          if (ui::DragInt("Torus: Twist", (int *) &mTorusTwist, 0.01f)) {
             createGeometry();
           };
           if (ui::DragFloat("Torus: Twist Offset", &mTorusOffset, 0.01f)) {
             createGeometry();
           };
           break;
-        // Torus Knot
+          // Torus Knot
         case TORUSKNOT:
           if (ui::DragInt("Torus Knot: Parameter P", &mTorusKnotP, 0.01f)) {
             createGeometry();
@@ -1056,9 +1080,9 @@ void GeometryApp::drawUI() {
           break;
       }
     }
-    ui::Combo("Quality", (int*)&mQualitySelected, qualities);
-    ui::Combo("Viewing Mode", (int*)&mViewMode, viewModes);
-    ui::Combo("Texturing Mode", (int*)&mTexturingMode, texturingModes);
+    ui::Combo("Quality", (int *) &mQualitySelected, qualities);
+    ui::Combo("Viewing Mode", (int *) &mViewMode, viewModes);
+    ui::Combo("Texturing Mode", (int *) &mTexturingMode, texturingModes);
     ui::Checkbox("Show Grid", &mShowGrid);
     ui::Checkbox("Show Normals", &mShowNormals);
     ui::Checkbox("Show Tangents", &mShowTangents);
@@ -1075,7 +1099,7 @@ void GeometryApp::drawUI() {
     ui::ColorButton(bColor);
     if (ui::BeginPopupContextItem("background color", 0)) {
       ui::Text("Edit color");
-      if (ui::ColorPicker3("", (float*)&mBackGroundColor)) {
+      if (ui::ColorPicker3("", (float *) &mBackGroundColor)) {
         bColor = ImColor(mBackGroundColor.r, mBackGroundColor.g,
                          mBackGroundColor.b, 1.0);
       }
@@ -1088,7 +1112,7 @@ void GeometryApp::drawUI() {
     ui::ColorButton(pColor);
     if (ui::BeginPopupContextItem("primitive color", 0)) {
       ui::Text("Edit color");
-      if (ui::ColorPicker3("", (float*)&mPrimitiveColor)) {
+      if (ui::ColorPicker3("", (float *) &mPrimitiveColor)) {
         pColor = ImColor(mPrimitiveColor.r, mPrimitiveColor.g,
                          mPrimitiveColor.b, 1.0);
       }
@@ -1101,7 +1125,7 @@ void GeometryApp::drawUI() {
     ui::ColorButton(wColor);
     if (ui::BeginPopupContextItem("wire color", 0)) {
       ui::Text("Edit color");
-      if (ui::ColorPicker3("", (float*)&mWireColor)) {
+      if (ui::ColorPicker3("", (float *) &mWireColor)) {
         wColor = ImColor(mWireColor.r, mWireColor.g, mWireColor.b, 1.0);
       }
       ImGui::EndPopup();
@@ -1116,7 +1140,7 @@ void GeometryApp::drawUI() {
     }
 
     // ui::InputInt3("test Pos", (int*)&testPos);
-    ui::InputFloat3("testPos", (float*)&testPos);
+    ui::InputFloat3("testPos", (float *) &testPos);
     if (ui::Button("test ray")) {
       testRay();
     }
@@ -1164,7 +1188,7 @@ void GeometryApp::testGraph() {
 }
 
 void GeometryApp::testNfd() {
-  nfdchar_t* outPath = NULL;
+  nfdchar_t *outPath = NULL;
   nfdresult_t result = NFD_OpenDialog("stl,obj,off", NULL, &outPath);
   if (result == NFD_OKAY) {
     puts("Success!");
@@ -1229,11 +1253,12 @@ void GeometryApp::testProj() {
   // modelPos = vec3(pos4.x, pos4.y, pos4.z);
   modelPos = vec3(pos4);
 }
-bool GeometryApp::performPicking(vec3* pickedPoint, vec3* pickedNormal) {
+
+bool GeometryApp::performPicking(vec3 *pickedPoint, vec3 *pickedNormal) {
   // Generate a ray from the camera into our world. Note that we have to
   // flip the vertical coordinate.
-  float u = mMousePos.x / (float)getWindowWidth();
-  float v = mMousePos.y / (float)getWindowHeight();
+  float u = mMousePos.x / (float) getWindowWidth();
+  float v = mMousePos.y / (float) getWindowHeight();
   Ray ray = mCamera.generateRay(u, 1.0f - v, mCamera.getAspectRatio());
 
   // The coordinates of the bounding box are in object space, not world space,
@@ -1302,7 +1327,8 @@ bool GeometryApp::performPicking(vec3* pickedPoint, vec3* pickedNormal) {
   } else
     return false;
 }
-void GeometryApp::drawCube(const AxisAlignedBox& bounds, const Color& color) {
+
+void GeometryApp::drawCube(const AxisAlignedBox &bounds, const Color &color) {
   gl::ScopedColor clr(color);
   gl::ScopedModelMatrix model;
 
@@ -1311,8 +1337,8 @@ void GeometryApp::drawCube(const AxisAlignedBox& bounds, const Color& color) {
   mWireCube->draw();
 }
 
-void GeometryApp::Gizmo(const float* modelview_matrix,
-                        const float* projection_matrix) {
+void GeometryApp::Gizmo(const float *modelview_matrix,
+                        const float *projection_matrix) {
   static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::TRANSLATE);
   static ImGuizmo::MODE mCurrentGizmoMode(ImGuizmo::LOCAL);
 
@@ -1354,6 +1380,9 @@ void GeometryApp::Gizmo(const float* modelview_matrix,
                        mCurrentGizmoOperation, mCurrentGizmoMode,
                        glm::value_ptr(modelMat));
 }
+
 CINDER_APP(GeometryApp,
            RendererGl(RendererGl::Options().msaa(16)),
            prepareSettings)
+
+#pragma clang diagnostic pop

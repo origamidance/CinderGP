@@ -1,6 +1,8 @@
 cmake_minimum_required( VERSION 3.3 FATAL_ERROR )
-set( CMAKE_VERBOSE_MAKEFILE ON )
+set(CMAKE_VERBOSE_MAKEFILE OFF)
 
+set(CMAKE_C_COMPILER "/home/origamidance/dependencies/zapcc/bin/zapcc")
+set(CMAKE_CXX_COMPILER "/home/origamidance/dependencies/zapcc/bin/zapcc++")
 set(USE_COTIRE OFF CACHE BOOL "")
 message("++ USE_COTIRE: " ${USE_COTIRE})
 
