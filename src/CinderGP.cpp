@@ -467,6 +467,7 @@ void GeometryApp::mouseDown(MouseEvent event) {
 
 void GeometryApp::mouseUp(MouseEvent event) {
   ImGuizmo::Enable(true);
+
 }
 
 void GeometryApp::mouseDrag(MouseEvent event) {
